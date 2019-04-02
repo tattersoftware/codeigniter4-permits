@@ -7,10 +7,10 @@ class PermitModel extends Model
 	protected $table      = 'permits';
 	protected $primaryKey = 'id';
 
-	protected $returnType = 'Tatter\Permits\Entities\Permit';
+	protected $returnType = 'object';
 	protected $useSoftDeletes = false;
 
-	protected $allowedFields = [];
+	protected $allowedFields = ['name', 'user_id', 'group_id', 'created_by'];
 
 	protected $useTimestamps = true;
 

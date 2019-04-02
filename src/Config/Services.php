@@ -1,13 +1,16 @@
 <?php namespace Tatter\Permits\Config;
 
 use CodeIgniter\Config\BaseService;
+use CodeIgniter\Database\ConnectionInterface;
+use Tatter\Permits\Interfaces\PUserInterface;
+use Tatter\Permits\Interfaces\PGroupInterface;
 
 class Services extends BaseService
 {
-    public static function permits(BaseConfig $config = null, bool $getShared = true)
+    public static function permits(BaseConfig $config = null, ConnectionInterface $db = null, PUserInterface $userModel = null, bool $getShared = true)
     {
 		if ($getShared):
-			return static::getSharedInstance('permits', $config);
+			return static::getSharedInstance('permits', $db, $userModel, $config);
 		endif;
 
 		// prioritizes user config in app/Config if found
@@ -19,6 +22,6 @@ class Services extends BaseService
 			endif;
 		endif;
 
-		return new \Tatter\Permits\Permits($config);
+		return new \Tatter\Permits\Permits($config, $db, $userModel);
 	}
 }

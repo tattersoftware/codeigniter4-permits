@@ -9,4 +9,14 @@ class PermitsException extends FrameworkException implements ExceptionInterface
 	{
 		return new static("Table `{$table}` missing for permissions handling");
 	}
+	
+	public static function forInvalidModeType(string $table)
+	{
+		return new static("Invalid permit mode type on model for `{$table}`");
+	}
+	
+	public static function forInvalidMode(string $table, string $mode)
+	{
+		return new static("Invalid permit mode on model for `{$table}`: '{$mode}'");
+	}
 }
