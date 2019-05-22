@@ -19,7 +19,7 @@ class UserModel extends PModel implements PUserInterface
 	protected $table      = 'users';
 	protected $primaryKey = 'id';
 
-	protected $returnType = 'Tatter\Permits\Entities\User';
+	protected $returnType = 'object';
 	protected $useSoftDeletes = false;
 
 	protected $allowedFields = [ ];
