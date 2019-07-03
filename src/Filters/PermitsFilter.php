@@ -8,8 +8,21 @@ class PermitsFilter implements FilterInterface
 {
     public function before(RequestInterface $request, $params = null)
     {
-        var_dump($params);
-        die();
+	    if (empty($params))
+			return;
+
+        $permits = services('permits');
+        $userId = $permits->sessionUserId();
+        
+        if (empty($userId))
+        	return;
+        
+        // Check each requested permission
+        $result = true;
+		foreach ($params as $permission)
+			$result = $result && $permits->hasPermit($userId, $permission);
+		
+        return $result;
     }
 
     //--------------------------------------------------------------------
