@@ -15,7 +15,7 @@ use CodeIgniter\Config\BaseConfig;
 class Permits extends \Tatter\Permits\Config\Permits
 {
 	// key in $_SESSION that contains the integer ID of a logged in user
-	public $sessionUserId = "userId";
+	public $sessionUserId = "logged_in";
 	
 	// whether to implement groups access across the library
 	// set to 'false' if you don't have a groups table implemented

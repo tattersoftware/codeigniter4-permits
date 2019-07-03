@@ -5,7 +5,7 @@ use CodeIgniter\Config\BaseConfig;
 class Permits extends BaseConfig
 {
 	// key in $_SESSION that contains the integer ID of a logged in user
-	public $sessionUserId = "userId";
+	public $sessionUserId = "logged_in";
 	
 	// whether to implement groups access across the library
 	public $useGroups = true;

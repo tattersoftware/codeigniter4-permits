@@ -97,9 +97,11 @@ class Permits
 	}
 	
 	// checks for a logged in user based on config
-	// returns user ID or 0 for "not logged in"
+	// returns user ID, 0 for "not logged in", -1 for CLI
 	public function sessionUserId(): int
 	{
+		if (is_cli())
+			return -1;
 		return $this->session->get($this->config->sessionUserId) ?? 0;
 	}
 	
