@@ -33,15 +33,15 @@ class UserModel extends PModel implements PUserInterface
 	// permits
 	protected $mode = 0640;
 	protected $pivotKey = 'user_id';
-	protected $groupsPivot = 'groups_users';
+	protected $groupsPivot = 'auth_groups_users';
 	
 	// https://github.com/lonnieezell/myth-auth/blob/develop/src/Authorization/GroupModel.php
 	public function groups($userId = null): array
 	{
 		return $this->builder()
-			->select('groups.id')
+			->select('auth_groups.id')
 			->join($this->groupsPivot, "{$this->groupsPivot}.{$this->pivotKey} = {$this->table}.{$this->primaryKey}", 'left')
-			->join('groups', "{$this->groupsPivot}.group_id = groups.id", 'left')
+			->join('auth_groups', "{$this->groupsPivot}.group_id = auth_groups.id", 'left')
 			->where("{$this->groupsPivot}.{$this->pivotKey}", $userId)
 			->get()->getResultObject();
 	}
