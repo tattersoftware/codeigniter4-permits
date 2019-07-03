@@ -13,14 +13,10 @@ class Services extends BaseService
 			return static::getSharedInstance('permits', $db, $userModel, $config);
 		endif;
 
-		// prioritizes user config in app/Config if found
-		if (empty($config)):
-			if (class_exists('\Config\Permits')):
-				$config = new \Config\Permits();
-			else:
-				$config = new \Tatter\Permits\Config\Permits();
-			endif;
-		endif;
+		// If no config was injected then load one
+		// Prioritizes app/Config if found
+		if (empty($config))
+			$config = config('Permits');
 
 		return new \Tatter\Permits\Permits($config, $db, $userModel);
 	}
