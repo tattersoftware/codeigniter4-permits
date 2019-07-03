@@ -201,7 +201,7 @@ class Permits
 		// check for cached version
 		$cacheKey = "permits:{$name}:{$userId}";
 		$permit = cache($cacheKey);
-		if ($permit !== false)
+		if ($permit !== null)
 			return ! empty($this->cache($cacheKey, $permit));
 
 		// check database for user permit
