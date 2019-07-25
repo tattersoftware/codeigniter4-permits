@@ -19,4 +19,10 @@ class PermitsException extends FrameworkException implements ExceptionInterface
 	{
 		return new static(lang('Permits.invalidMode', [$table, $mode]));
 	}
+	
+	// Generic 'not allowed' exception
+	public static function forNotPermitted()
+	{
+		return new static(lang('Permits.notPermitted');
+	}
 }
