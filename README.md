@@ -135,10 +135,12 @@ if ($jobs->mayCreate()) ...
 $job = $jobs->find($jobId);
 if ($jobs->mayUpdate($job)) ...
 ```
-Built-in commands are CRUDL-style: `mayCreate()`, `mayRead($object)`, `mayUpdate($object)`,
-`mayDelete($id)`, `mayList()`. In addition to the object for methods that work on
+Built-in commands are CRUD-style: `mayCreate()`, `mayRead($object)`, `mayUpdate($object)`,
+`mayDelete($id)`, `mayList()`, `mayAdmin()`. In addition to the object for methods that work on
 specific instances, any command may take an optional userId for whom to check permissions;
 omitting this will default to the current logged-in user, as configured in Config/Permits.php.
+The super-permit `mayAdmin()` checks for the explicit permit `admin{Table}` and will supercede
+any of the other built-in commands.
 
 ## Extending
 
