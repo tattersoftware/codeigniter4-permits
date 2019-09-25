@@ -29,20 +29,6 @@ Once the files are downloaded and included in the autoload, run any library migr
 to ensure the database is setup correctly:
 * `> php spark migrate -all`
 
-**Pro Tip:** You can add the spark command to your composer.json to ensure your database is
-always current with the latest release:
-```
-{
-	...
-    "scripts": {
-        "post-update-cmd": [
-            "composer dump-autoload",
-            "php spark migrate -all"
-        ]
-    },
-	...
-```
-
 ## Configuration (optional)
 
 The library's default behavior can be altered by extending its config file. Copy
@@ -65,7 +51,7 @@ table. Entries might look like:
 
 You can check if a user has a specific permit, or inherits it from one of their groups:
 
-* `services('permits')->hasPermit($userId, 'readUsers');`
+* `service('permits')->hasPermit($userId, 'readUsers');`
 
 The library also comes with convenient CLI commands for managing explicit permissions;
 run `> php spark` for a list of commands in the "Permits" group.

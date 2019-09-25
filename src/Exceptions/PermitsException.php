@@ -23,6 +23,6 @@ class PermitsException extends FrameworkException implements ExceptionInterface
 	// Generic 'not allowed' exception
 	public static function forNotPermitted()
 	{
-		return new static(lang('Permits.notPermitted');
+		return new static(lang('Permits.notPermitted'));
 	}
 }

@@ -7,8 +7,8 @@
  * as a starting point, or replace it with your own user model.
  * This model expects:
  * 	The corresponding group model, Tatter\Permits\Models\GroupModel
- * 	Tables `users`, `groups`, and `groups_users` (will still be prefixed)
- * 	Primary keys `id` on `users` and `groups`; `user_id` and `group_id` on the pivot
+ * 	Tables `users`, `auth_groups`, and `auth_groups_users` (will still be prefixed)
+ * 	Primary keys `id` on `users` and `auth_groups`; `user_id` and `group_id` on the pivot
  *
  */
 
