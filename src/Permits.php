@@ -196,26 +196,40 @@ class Permits
 	}
 	
 	// check if user has direct permit or inherited group permit
-	public function hasPermit(int $userId, string $name): bool
+	public function hasPermit(?int $userId, string $name): bool
 	{
+		if (empty($userId))
+		{
+			return false;
+		}
+			
 		// check for cached version
 		$cacheKey = "permits:{$name}:{$userId}";
 		$permit = cache($cacheKey);
 		if ($permit !== null)
+		{
 			return ! empty($this->cache($cacheKey, $permit));
-
+		}
+		
 		// check database for user permit
 		if ($permit = $this->hasUserPermit($userId, $name))
+		{
 			return ! empty($this->cache($cacheKey, $permit));
+		}
 		
 		if (! $this->config->useGroups)
+		{
 			return false;
+		}
 		
 		// check database for each of user's groups
-		foreach ($this->userModel->groups($userId) as $group):
+		foreach ($this->userModel->groups($userId) as $group)
+		{
 			if ($permit = $this->hasGroupPermit($group->id, $name))
+			{
 				return $this->cache($cacheKey, $permit);
-		endforeach;
+			}
+		}
 		
 		return false;
 	}
