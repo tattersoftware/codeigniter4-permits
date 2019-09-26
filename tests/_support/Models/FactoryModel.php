@@ -1,9 +1,8 @@
 <?php namespace ModuleTests\Support\Models;
 
-use CodeIgniter\Model;
-use Tatter\Permits\Models\PModel;
+use Tatter\Permits\Model;
 
-class FactoryModel extends PModel
+class FactoryModel extends Model
 {
 	protected $table      = 'factories';
 	protected $primaryKey = 'id';
@@ -20,8 +19,7 @@ class FactoryModel extends PModel
 	protected $skipValidation     = false;
 	
 	// Permits
-	public $tableMode  = 0664;
-	public $rowMode    = 0660;
+	public $mode       = 04660;
 	public $groupKey   = 'group_id';
 	public $pivotKey   = 'factory_id';
 	public $usersPivot = 'factories_users';

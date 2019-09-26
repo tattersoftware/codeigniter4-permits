@@ -12,9 +12,9 @@
  *
  */
 
-use Tatter\Permits\Interfaces\PUserInterface;
+use Tatter\Permits\Interfaces\PermitsUserModelInterface;
 
-class UserModel extends PModel implements PUserInterface
+class UserModel extends \Tatter\Permits\Model implements PermitsUserModelInterface
 {
 	protected $table      = 'users';
 	protected $primaryKey = 'id';
@@ -31,7 +31,7 @@ class UserModel extends PModel implements PUserInterface
 	protected $skipValidation     = true;
 	
 	// permits
-	protected $mode = 0640;
+	protected $mode = 00640;
 	protected $pivotKey = 'user_id';
 	protected $groupsPivot = 'auth_groups_users';
 	

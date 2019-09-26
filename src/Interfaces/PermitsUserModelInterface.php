@@ -10,7 +10,7 @@
  *
  */
  
-interface PUserInterface
+interface PermitsUserModelInterface
 {
 	public function groups($userId = null): array;
 }

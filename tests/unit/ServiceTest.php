@@ -31,13 +31,24 @@ class ServiceTest extends \CodeIgniter\Test\CIUnitTestCase
 		$this->assertFalse($this->permits->isPermissible(null, $model));
 	}
 
-	public function testIsPermissibleFalseWithStringRowMode()
+	public function testIsPermissibleFalseWithInvalidMode()
 	{
 		$object = new \stdClass();
 		$object->name = 'foobar';
 		
 		$model = new FactoryModel();
-		$model->rowMode = '755';
+		$model->mode = 024644;
+		
+		$this->assertFalse($this->permits->isPermissible($object, $model));
+	}
+
+	public function testIsPermissibleFalseWithStringMode()
+	{
+		$object = new \stdClass();
+		$object->name = 'foobar';
+		
+		$model = new FactoryModel();
+		$model->mode = '4644';
 		
 		$this->assertFalse($this->permits->isPermissible($object, $model));
 	}

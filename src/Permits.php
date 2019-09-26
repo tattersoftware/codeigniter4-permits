@@ -9,11 +9,11 @@
 * Description:  Lightweight permission handler for CodeIgniter 4
 *
 * Requirements:
-* 	>= PHP 7.1
+* 	>= PHP 7.2
 * 	>= CodeIgniter 4.0
 *	Preconfigured, autoloaded Database
 *	CodeIgniter's Session Library (loaded automatically)
-* 	User model (supplied or internal) that implements PUserInterface
+* 	User model (supplied or internal) that implements PermitsUserModelInterface
 *	`permits` table (run migrations)
 *
 * Configuration:
@@ -32,7 +32,7 @@ use CodeIgniter\Config\Services;
 use Tatter\Permits\Models\PermitModel;
 use Tatter\Permits\Models\UserModel;
 use Tatter\Permits\Exceptions\VisitsException;
-use Tatter\Permits\Interfaces\PUserInterface;
+use Tatter\Permits\Interfaces\PermitsUserModelInterface;
 
 /*** CLASS ***/
 class Permits
@@ -93,7 +93,7 @@ class Permits
 		/*** Validations ***/
 		
 		// if provided user model is invalid then use the internal version
-		$this->userModel = ($userModel instanceof PUserInterface)? $userModel : new UserModel();
+		$this->userModel = ($userModel instanceof PermitsUserModelInterface)? $userModel : new UserModel();
 	}
 	
 	// checks for a logged in user based on config
@@ -116,7 +116,7 @@ class Permits
 	// series fo checks to ensure input is a valid object and model has permissions setup
 	public function isPermissible($object, $objectModel): bool
 	{
-		if (! is_octal($objectModel->rowMode))
+		if (! is_octal($objectModel->mode))
 			return false;
 		if (empty($object))
 			return false;

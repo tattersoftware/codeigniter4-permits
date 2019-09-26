@@ -18,7 +18,7 @@ class HelperTest extends \CodeIgniter\Test\CIUnitTestCase
 	public function testIsOctalFalse()
 	{
 		$this->assertFalse(is_octal('0001'));
-		$this->assertFalse(is_octal(777));
+		$this->assertFalse(is_octal(7777));
 	}
 
 	public function testMode2Array()

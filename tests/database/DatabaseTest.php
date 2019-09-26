@@ -18,7 +18,7 @@ class DatabaseTest extends ModuleTests\Support\PermitsTestCase
 		$this->session->logged_in = 2;
 		
 		$model = new FactoryModel();
-		$model->tableMode = 0777;
+		$model->mode = 02640;
 		
 		$this->assertTrue($model->mayCreate());
 	}

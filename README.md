@@ -46,8 +46,8 @@ table. Entries might look like:
 
 | User ID | Group ID | Permit     |
 | ------- | -------- | ---------- |
-| 7       |          | readUsers  |
-|         | 3        | deleteJobs |
+|       7 |          | readUsers  |
+|         |        3 | deleteJobs |
 
 You can check if a user has a specific permit, or inherits it from one of their groups:
 
@@ -58,11 +58,17 @@ run `> php spark` for a list of commands in the "Permits" group.
 
 ### Inferred
 
-Inferred permissions are handle by your models in a `chmod`-style octal mode. By
-default `PModel` comes with modes for `0664`, or "owner write, group write,
-world read". You may (and should) set your own mode on your models by providing
-a octal (0###) values to `$tableMode` and `$rowMode`. **Hint:** Think of `$tableMode` as the
-"directory", controlling access to list and create new files, and `$rowMode` as the "files",
+Inferred permissions are handle by your models in a `chmod`-style four-digit octal mode. By
+default the Permits Model comes with mode `04664`, or "domain list, owner write, group write,
+world read":
+* 4 Domain list, no create
+* 6 Owner  read, write
+* 6 Group  read, write
+* 4 World  read, no write
+
+You may (and should) set your own mode on your models by providing an octal (0####) value
+to the `$mode` property. **Hint:** Think of the first digit as permission to the "directory",
+controlling access to list and create new files, and the remaining three digits as the "files",
 controlling access to each individual instance of your model's return-type.
 
 In addition to the mode, you may supply your model with database information on how to
@@ -88,7 +94,7 @@ Each model expects either an ID field or a pivot table for both users and groups
 determine if a particular object is accessible. A simple example might help.
 ```
 // app/Models/JobModel.php
-class JobModel extends Tatter\Permits\Models\PModel
+class JobModel extends Tatter\Permits\Model
 {
 	protected $table      = 'jobs';
 	protected $primaryKey = 'id';
@@ -96,19 +102,18 @@ class JobModel extends Tatter\Permits\Models\PModel
 	
 	...
 		
-	// permits
-	public $tableMode  = 0664;
-	public $rowMode    = 0660;
+	// Permits
+	public $mode       = 04660;
 	public $groupKey   = 'group_id';
 	public $pivotKey   = 'job_id';
 	public $usersPivot = 'jobs_users';
 }
 ```
-This creates a new `PModel` "JobModel", with `$tableMode` `0664`, so any user may list jobs
-but would need a permit to create a new one. JobModel has `$rowMode` of `0660`, so users
-and groups have full access to any job they have ownership of, but cannot even view details
-on other jobs. For ownership, JobModel tells the library to check the Job entity for a key
-`group_id` to determine which group has ownership. JobModel also defines
+This creates a new permitted model `JobModel`, with `$mode` `04660`, so any user may list
+jobs but would need an explicit permit to create a new one. Users and groups have full
+access to any job they have ownership of, but cannot even view details on other jobs.
+For ownership, `JobModel` tells the library to check the `Job` entity for a key
+`group_id` to determine which group has ownership. `JobModel` also defines
 `jobs_users` (`job_id`,`user_id`) as a source for users who have ownership, so multiple
 individuals may be assigned to the same job without being in its ownership group.
 
@@ -116,25 +121,34 @@ Once your models and entities are setup, you are ready to use the built-in comma
 (or add your own) to check user permissions:
 ```
 $jobs = new JobModel();
-if ($jobs->mayCreate()) ...
+if ($jobs->mayCreate())
+{
+	...
+}
 
 $job = $jobs->find($jobId);
-if ($jobs->mayUpdate($job)) ...
+if ($jobs->mayUpdate($job))
+{
+	...
+}
 ```
 Built-in commands are CRUD-style: `mayCreate()`, `mayRead($object)`, `mayUpdate($object)`,
-`mayDelete($id)`, `mayList()`, `mayAdmin()`. In addition to the object for methods that work on
-specific instances, any command may take an optional userId for whom to check permissions;
-omitting this will default to the current logged-in user, as configured in Config/Permits.php.
-The super-permit `mayAdmin()` checks for the explicit permit `admin{Table}` and will supercede
-any of the other built-in commands.
+`mayDelete($id)`, `mayList()`, `mayAdmin()`. Command parameters are the object to test (for
+methods that work on specific instances) and an optional `$userId` to specify who to test
+for permissions. Omitting `$userId` will default to the current logged-in user, as
+configured in **Config/Permits.php**.
+
+The super-permit `mayAdmin()` checks for the explicit permit `admin{Table}` and will
+supercede any of the other built-in commands.
 
 ## Extending
 
 Permits comes with a basic user model for reading and testing authorizations,
 but in most cases you will want to provide your own. You may extend the built-in model
-`\Tatter\Permits\Models\User` or supply your own to the `Services::permits()`, or directly
-to the class. If you use your own model make sure it implements the Permits User interface
-(`\Tatter\Permits\Interfaces\PUserInterface`) and has an appropriate `groups()` method.
+`\Tatter\Permits\Models\User` or supply your own to `Services::permits()`, or directly
+to the class. If you use your own model make sure it implements the Permits User Model
+interface (`\Tatter\Permits\Interfaces\PermitUserModelInterface`) and has an appropriate
+`groups()` method.
 
 The CRUDL-style methods are just a starting point! Your models can override these built-in
 methods or add new methods that take advantage of the library's structure and methods.

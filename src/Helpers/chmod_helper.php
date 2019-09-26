@@ -9,17 +9,21 @@ if (! function_exists('octal2array'))
 		if (! is_octal($mode))
 			return false;
 
-		$permissions['user']['read']      = (bool)($mode & 0400);
-		$permissions['user']['write']     = (bool)($mode & 0200);
-		$permissions['user']['execute']   = (bool)($mode & 0100);
+		$permissions['domain']['read']    = (bool)($mode & 04000);
+		$permissions['domain']['write']   = (bool)($mode & 02000);
+		$permissions['domain']['execute'] = (bool)($mode & 01000);
+
+		$permissions['user']['read']      = (bool)($mode & 00400);
+		$permissions['user']['write']     = (bool)($mode & 00200);
+		$permissions['user']['execute']   = (bool)($mode & 00100);
 		
-		$permissions['group']['read']     = (bool)($mode & 0040);
-		$permissions['group']['write']    = (bool)($mode & 0020);
-		$permissions['group']['execute']  = (bool)($mode & 0010);
+		$permissions['group']['read']     = (bool)($mode & 00040);
+		$permissions['group']['write']    = (bool)($mode & 00020);
+		$permissions['group']['execute']  = (bool)($mode & 00010);
 		
-		$permissions['world']['read']     = (bool)($mode & 0004);
-		$permissions['world']['write']    = (bool)($mode & 0002);
-		$permissions['world']['execute']  = (bool)($mode & 0001);
+		$permissions['world']['read']     = (bool)($mode & 00004);
+		$permissions['world']['write']    = (bool)($mode & 00002);
+		$permissions['world']['execute']  = (bool)($mode & 00001);
 		
 		return $permissions;		
 	}
@@ -32,7 +36,7 @@ if (! function_exists('is_octal'))
 	{
 		if (! is_int($octal))
 			return false;
-		if ($octal < 0 || $octal > 511)
+		if ($octal < 0 || $octal > 4095)
 			return false;
 			
 		return octdec(decoct($octal)) == $octal;
