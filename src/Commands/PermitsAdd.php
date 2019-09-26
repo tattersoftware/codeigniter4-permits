@@ -2,6 +2,7 @@
 
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
+use Tatter\Permits\Models\PermitModel;
 
 class PermitsAdd extends BaseCommand
 {
@@ -18,40 +19,42 @@ class PermitsAdd extends BaseCommand
 
 	public function run(array $params = [])
     {
-		$db = db_connect();
+		$permits = new PermitModel();
 		
-		// consume or prompt for permission name
+		// Consume or prompt for the permission name
 		$permission = array_shift($params);
 		if (empty($permission))
-			$permission = CLI::prompt("Permission to grant");
-		if (empty($permission)):
-			CLI::error("You must supply a permission name, e.g. 'listJobs'");
-			return;
-		endif;
+		{
+			$permission = CLI::prompt('Permission to grant', null, 'required');
+		}
 		
-		// consume or prompt for target table
+		// Consume or prompt for the target table
 		$target = array_shift($params);
 		if (empty($target))
+		{
 			$target = CLI::prompt('Target', ['groups', 'users']);
+		}
 				
-		// consume or prompt for target ID
+		// Consume or prompt for the target ID
 		$id = array_shift($params);
 		if (empty($id))
+		{
 			$id = CLI::prompt(ucfirst(substr($target, 0, -1)) . " ID", null, 'is_natural_no_zero');
-
-		if ($target=='groups'):
+		}
+		
+		if ($target=='groups')
+		{
 			$row['group_id'] = $id;
-		elseif ($target=='users'):
+		}
+		else
+		{
 			$row['user_id'] = $id;
-		else:
-			CLI::error("Invalid target supplied: '{$target}'");
-			return;
-		endif;
+		}
 		$row['name'] = $permission;
 				
 		try
 		{
-			$db->table('permits')->replace($row);
+			$permits->save($row);
 		}
 		catch (\Exception $e)
 		{
