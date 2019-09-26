@@ -154,3 +154,18 @@ The CRUDL-style methods are just a starting point! Your models can override thes
 methods or add new methods that take advantage of the library's structure and methods.
 Check out the code in the examples for ideas how to leverageboth explicit and inferred
 permissions.
+
+### PermitsTrait
+
+If you cannot extend the model (for example, already extending another library's model)
+you can supply the necessary class variables directly (see above) and use the library's
+trait to access the class "may" methods:
+```
+class MyModel extends \Tatter\Relations\Model
+{
+	use \Tatter\Permits\Traits\PermitsTrait;
+	
+	public $mode     = 06666;
+	public $pivotKey = 'foo_id';
+	...
+```
