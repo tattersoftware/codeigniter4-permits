@@ -2,7 +2,7 @@
 
 use CodeIgniter\Database\Migration;
 
-class Migration_create_table_permits extends Migration
+class CreatePermitsTables extends Migration
 {
 	public function up()
 	{
