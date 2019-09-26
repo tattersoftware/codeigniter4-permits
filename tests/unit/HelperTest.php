@@ -24,7 +24,7 @@ class HelperTest extends \CodeIgniter\Test\CIUnitTestCase
 	public function testMode2Array()
 	{
 		$array = mode2array(0755);
-		$this->assertEmpty($array['world']['write']);
-		$this->assertNotEmpty($array['user']['execute']);
+		$this->assertFalse($array['world']['write']);
+		$this->assertTrue($array['user']['execute']);
 	}
 }

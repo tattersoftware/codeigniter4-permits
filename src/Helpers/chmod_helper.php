@@ -9,17 +9,17 @@ if (! function_exists('octal2array'))
 		if (! is_octal($mode))
 			return false;
 
-		$permissions['user']['read']      = $mode & 0400;
-		$permissions['user']['write']     = $mode & 0200;
-		$permissions['user']['execute']   = $mode & 0100;
+		$permissions['user']['read']      = (bool)($mode & 0400);
+		$permissions['user']['write']     = (bool)($mode & 0200);
+		$permissions['user']['execute']   = (bool)($mode & 0100);
 		
-		$permissions['group']['read']     = $mode & 0040;
-		$permissions['group']['write']    = $mode & 0020;
-		$permissions['group']['execute']  = $mode & 0010;
+		$permissions['group']['read']     = (bool)($mode & 0040);
+		$permissions['group']['write']    = (bool)($mode & 0020);
+		$permissions['group']['execute']  = (bool)($mode & 0010);
 		
-		$permissions['world']['read']     = $mode & 0004;
-		$permissions['world']['write']    = $mode & 0002;
-		$permissions['world']['execute']  = $mode & 0001;
+		$permissions['world']['read']     = (bool)($mode & 0004);
+		$permissions['world']['write']    = (bool)($mode & 0002);
+		$permissions['world']['execute']  = (bool)($mode & 0001);
 		
 		return $permissions;		
 	}
