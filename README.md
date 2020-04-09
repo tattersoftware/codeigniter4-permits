@@ -5,7 +5,7 @@ Lightweight permission handler for CodeIgniter 4
 
 1. Install with Composer: `> composer require tatter/permits`
 2. Update the database: `> php spark migrate -all`
-3. Extend your models: `class JobModel extends Tatter\Permits\Models\PModel`;
+3. Extend your models: `class JobModel extends \Tatter\Permits\Model`;
 4. Ready to use! `if ($jobs->mayCreate()) ...`
 5. (Optional) Add overrides:
 `php spark permits:add`
@@ -94,7 +94,7 @@ Each model expects either an ID field or a pivot table for both users and groups
 determine if a particular object is accessible. A simple example might help.
 ```
 // app/Models/JobModel.php
-class JobModel extends Tatter\Permits\Model
+class JobModel extends \Tatter\Permits\Model
 {
 	protected $table      = 'jobs';
 	protected $primaryKey = 'id';

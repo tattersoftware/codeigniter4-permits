@@ -1,6 +1,5 @@
 <?php namespace Tatter\Permits;
 
-use CodeIgniter\Config\Services;
 use Tatter\Permits\Traits\PermitsTrait;
 
 class Model extends \CodeIgniter\Model
