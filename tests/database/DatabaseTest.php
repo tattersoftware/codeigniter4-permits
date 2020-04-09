@@ -1,8 +1,8 @@
 <?php
 
-use ModuleTests\Support\Models\FactoryModel;
+use Tests\Support\Models\FactoryModel;
 
-class DatabaseTest extends ModuleTests\Support\PermitsTestCase
+class DatabaseTest extends \Tests\Support\PermitsTestCase
 {
 	public function testMayList()
 	{

@@ -1,4 +1,4 @@
-<?php namespace ModuleTests\Support\Models;
+<?php namespace Tests\Support\Models;
 
 use Tatter\Permits\Model;
 

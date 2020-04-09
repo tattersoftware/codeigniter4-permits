@@ -1,4 +1,4 @@
-<?php namespace ModuleTests\Support\Database\Seeds;
+<?php namespace Tests\Support\Database\Seeds;
 
 class PermitSeeder extends \CodeIgniter\Database\Seeder
 {

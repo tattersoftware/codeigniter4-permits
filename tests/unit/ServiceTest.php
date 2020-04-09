@@ -1,6 +1,6 @@
 <?php
 
-use ModuleTests\Support\Models\FactoryModel;
+use Tests\Support\Models\FactoryModel;
 
 class ServiceTest extends \CodeIgniter\Test\CIUnitTestCase
 {
