@@ -1,38 +1,11 @@
 <?php namespace Tatter\Permits;
 
-/***
-* Name: Permits
-* Author: Matthew Gatner
-* Contact: mgatner@tattersoftware.com
-* Created: 2019-02-12
-*
-* Description:  Lightweight permission handler for CodeIgniter 4
-*
-* Requirements:
-* 	>= PHP 7.2
-* 	>= CodeIgniter 4.0
-*	Preconfigured, autoloaded Database
-*	CodeIgniter's Session Library (loaded automatically)
-* 	User model (supplied or internal) that implements PermitsUserModelInterface
-*	`permits` table (run migrations)
-*
-* Configuration:
-* 	Use app/Config/Permits.php to override default behavior
-* 	Run migrations to update database tables:
-* 		> php spark migrate:latest -n "Tatter\Permits"
-*
-* @package CodeIgniter4-Permits
-* @author Matthew Gatner
-* @link https://github.com/tattersoftware/codeigniter4-permits
-*
-***/
-
-use CodeIgniter\Config\BaseConfig;
-use CodeIgniter\Config\Services;
-use Tatter\Permits\Models\PermitModel;
-use Tatter\Permits\Models\UserModel;
+use Config\Services;
+use Tatter\Permits\Config\Permits as PermitsConfig;
 use Tatter\Permits\Exceptions\VisitsException;
 use Tatter\Permits\Interfaces\PermitsUserModelInterface;
+use Tatter\Permits\Models\PermitModel;
+use Tatter\Permits\Models\UserModel;
 
 /*** CLASS ***/
 class Permits
@@ -52,16 +25,9 @@ class Permits
 	protected $db;
 
 	/**
-	 * The active user session.
-	 *
-	 * @var \CodeIgniter\Session\Session
-	 */
-	protected $session;
-
-	/**
 	 * The permit model used to fetch permits.
 	 *
-	 * @var \Tatter\Permits\Models\PermitModel
+	 * @var PermitModel
 	 */
 	protected $permitModel;
 
@@ -72,37 +38,38 @@ class Permits
 	 */
 	protected $userModel = null;
 
-	// initiate library, check for existing session
-	public function __construct(BaseConfig $config, ConnectionInterface $db = null, PUserInterface $userModel = null)
+	/**
+	 * Initializes the library.
+	 *
+	 * @param PermitsConfig $config
+	 * @param ConnectionInterface|null $db
+	 * @param PermitsUserModelInterface|null $userModel
+	 */
+	public function __construct(PermitsConfig $config, PermitsUserModelInterface $userModel = null)
 	{		
-		// save configuration
 		$this->config = $config;
 
-		// initiate the Session library
-		$this->session = Services::session();
-		
-		// load the permit model
-		$this->permitModel = new PermitModel();
-		
-		// If no db connection passed in, use the default database group.
-		$this->db = db_connect($db);
-		
-		// load helper for mode conversions
+		// Load the models
+		$this->userModel   = $userModel ?? model(UserModel::class);
+		$this->permitModel = model(PermitModel::class);
+
+		// Load the helper for mode conversions
 		helper('chmod');
-		
-		/*** Validations ***/
-		
-		// if provided user model is invalid then use the internal version
-		$this->userModel = ($userModel instanceof PermitsUserModelInterface)? $userModel : new UserModel();
 	}
-	
-	// checks for a logged in user based on config
-	// returns user ID, 0 for "not logged in", -1 for CLI
+
+	/**
+	 * Checks for a logged in user based on the configured key.
+	 *
+	 * @return int|null  The user ID, 0 for "not logged in", -1 for CLI
+	 */
 	public function sessionUserId(): int
 	{
-		if (ENVIRONMENT != 'testing' && is_cli())
+		if (ENVIRONMENT !== 'testing' && is_cli())
+		{
 			return -1;
-		return $this->session->get($this->config->sessionUserId) ?? 0;
+		}
+
+		return session($this->config->sessionUserId) ?? 0;
 	}
 	
 	// try to cache a permit and pass it back

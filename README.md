@@ -1,5 +1,5 @@
 # Tatter\Permits
-Lightweight permission handler for CodeIgniter 4
+Dynamic permission handling for CodeIgniter 4
 
 ## Quick Start
 

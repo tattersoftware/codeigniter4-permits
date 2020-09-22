@@ -1,6 +1,6 @@
 <?php namespace Tatter\Permits\Traits;
 
-use CodeIgniter\Config\Services;
+use Config\Services;
 
 trait PermitsTrait
 {
