@@ -1,6 +1,6 @@
 {
 	"name": "tatter/permits",
-	"description": "Lightweight permission handler for CodeIgniter 4",
+	"description": "Dynamic permission handling for CodeIgniter 4",
 	"keywords": [
 		"codeigniter",
 		"codeigniter4",
@@ -31,9 +31,12 @@
 	},
 	"require-dev": {
 		"codeigniter4/codeigniter4": "dev-develop",
-		"mikey179/vfsstream": "1.6.*",
-		"mockery/mockery": "^1.0",
-		"phpunit/phpunit" : "^8.0"
+		"fzaninotto/faker": "^1.9@dev",
+		"mikey179/vfsstream": "^1.6",
+		"phpunit/phpunit": "^8.5",
+		"phpstan/phpstan": "^0.12",
+		"squizlabs/php_codesniffer": "^3.5",
+		"codeigniter4/codeigniter4-standard": "^1.0"
 	},
 	"autoload": {
 		"psr-4": {
@@ -46,9 +49,12 @@
 		}
 	},
 	"scripts": {
+		"analyze": "phpstan analyze",
+		"style": "phpcs --standard=./vendor/codeigniter4/codeigniter4-standard/CodeIgniter4 src/ tests/",
 		"test": "phpunit",
 		"post-update-cmd": [
 			"composer dump-autoload"
 		]
 	}
 }
+
