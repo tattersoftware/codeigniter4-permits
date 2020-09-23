@@ -2,7 +2,6 @@
 
 use Config\Services;
 use Tatter\Permits\Config\Permits as PermitsConfig;
-use Tatter\Permits\Exceptions\VisitsException;
 use Tatter\Permits\Interfaces\PermitsUserModelInterface;
 use Tatter\Permits\Models\PermitModel;
 use Tatter\Permits\Models\UserModel;
@@ -13,16 +12,9 @@ class Permits
 	/**
 	 * Our configuration instance.
 	 *
-	 * @var \Tatter\Permits\Config\Permits
+	 * @var PermitsConfig
 	 */
 	protected $config;
-
-	/**
-	 * The main database connection, needed to check permits table.
-	 *
-	 * @var ConnectionInterface
-	 */
-	protected $db;
 
 	/**
 	 * The permit model used to fetch permits.
@@ -34,7 +26,7 @@ class Permits
 	/**
 	 * External model to handle users
 	 *
-	 * @var CodeIgniter\Model
+	 * @var PermitsUserModelInterface
 	 */
 	protected $userModel = null;
 
@@ -42,7 +34,6 @@ class Permits
 	 * Initializes the library.
 	 *
 	 * @param PermitsConfig $config
-	 * @param ConnectionInterface|null $db
 	 * @param PermitsUserModelInterface|null $userModel
 	 */
 	public function __construct(PermitsConfig $config, PermitsUserModelInterface $userModel = null)
@@ -60,7 +51,7 @@ class Permits
 	/**
 	 * Checks for a logged in user based on the configured key.
 	 *
-	 * @return int|null  The user ID, 0 for "not logged in", -1 for CLI
+	 * @return int  The user ID, 0 for "not logged in", -1 for CLI
 	 */
 	public function sessionUserId(): int
 	{
@@ -121,9 +112,8 @@ class Permits
 		
 		// otherwise, check for a valid pivot table
 		elseif (! empty($objectModel->usersPivot)):
-			$test = $objectModel->db->table($objectModel->usersPivot)
-				->where($objectModel->userKey, $userId)
-				->where($this->pivotKey, $object->{$objectModel->primaryKey})
+			// @phpstan-ignore-next-line
+			$test = $objectModel->builder($objectModel->usersPivot)->where($objectModel->userKey, $userId)->where($objectModel->pivotKey, $object->{$objectModel->primaryKey})
 				->get()->getResult();
 			return ! empty($test);
 		endif;
@@ -152,9 +142,8 @@ class Permits
 		
 		// otherwise, check for a valid pivot table
 		elseif (! empty($objectModel->groupsPivot)):
-			$test = $objectModel->db->table($objectModel->groupsPivot)
-				->where($objectModel->groupKey, $userId)
-				->where($this->pivotKey, $object->{$objectModel->primaryKey})
+			// @phpstan-ignore-next-line
+			$test = $objectModel->builder($objectModel->groupsPivot)->where($objectModel->groupKey, $userId)->where($objectModel->pivotKey, $object->{$objectModel->primaryKey})
 				->get()->getResult();
 			return ! empty($test);
 		endif;
@@ -215,7 +204,7 @@ class Permits
 	}
 	
 	// checks for global permit for one group
-	public function hasGroupPermit(int $groupId, string $name): bool
+	public function hasGroupPermit(int $groupId, string $name): ?bool
 	{
 		if (! $this->config->useGroups)
 			return null;

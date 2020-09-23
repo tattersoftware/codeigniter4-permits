@@ -1,7 +1,5 @@
 <?php namespace Tatter\Permits\Traits;
 
-use Config\Services;
-
 trait PermitsTrait
 {
 	// Whether the current/supplied user may insert rows into this model's table
@@ -14,7 +12,7 @@ trait PermitsTrait
 		}
 		
 		// Load the library and check for a user
-		$permits = Services::permits();
+		$permits = service('permits');
 		$userId = $userId ?? $permits->sessionUserId();
 
 		// Check for a permit
@@ -48,7 +46,7 @@ trait PermitsTrait
 		}
 		
 		// Load the library and check for a user
-		$permits = Services::permits();
+		$permits = service('permits');
 		$userId = $userId ?? $permits->sessionUserId();
 
 		// Check for an explicit permit
@@ -95,7 +93,7 @@ trait PermitsTrait
 		}
 		
 		// Load the library and check for a user
-		$permits = Services::permits();
+		$permits = service('permits');
 		$userId = $userId ?? $permits->sessionUserId();
 
 		// Check for a permit
@@ -103,9 +101,6 @@ trait PermitsTrait
 		{
 			return true;
 		}
-		
-		// Get the object
-		$object = $this->find($id);
 
 		// Make sure permissions are setup correctly
 		if (! $permits->isPermissible($object, $this))
@@ -157,7 +152,7 @@ trait PermitsTrait
 		}
 		
 		// Load the library and check for a user
-		$permits = Services::permits();
+		$permits = service('permits');
 		$userId = $userId ?? $permits->sessionUserId();
 
 		// Check for a permit
@@ -185,7 +180,7 @@ trait PermitsTrait
 	public function mayAdmin(int $userId = null): bool
 	{
 		// Load the library and check for a user
-		$permits = Services::permits();
+		$permits = service('permits');
 		$userId = $userId ?? $permits->sessionUserId();
 
 		// Check for the permit

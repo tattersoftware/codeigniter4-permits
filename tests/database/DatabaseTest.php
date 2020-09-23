@@ -6,7 +6,7 @@ class DatabaseTest extends \Tests\Support\PermitsTestCase
 {
 	public function testMayList()
 	{
-		$this->session->logged_in = 2;
+		session()->logged_in = 2;
 		
 		$model = new FactoryModel();
 		
@@ -15,7 +15,7 @@ class DatabaseTest extends \Tests\Support\PermitsTestCase
 	
 	public function testMayCreate()
 	{
-		$this->session->logged_in = 2;
+		session()->logged_in = 2;
 		
 		$model = new FactoryModel();
 		$model->mode = 02640;

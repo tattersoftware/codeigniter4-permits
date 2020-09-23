@@ -6,8 +6,6 @@ class CreateTestTables extends Migration
 {
 	public function up()
 	{
-		$this->db->disableForeignKeyChecks();
-		
 		// Factories
 		$fields = [
 			'group_id'       => ['type' => 'int', 'null' => true],
@@ -83,23 +81,15 @@ class CreateTestTables extends Migration
         ];
         $this->forge->addField($fields);
         $this->forge->addKey(['group_id', 'user_id']);
-        $this->forge->addForeignKey('group_id', 'auth_groups', 'id', false, 'CASCADE');
-        $this->forge->addForeignKey('user_id', 'users', 'id', false, 'CASCADE');
         $this->forge->createTable('auth_groups_users', true);
-        
-		$this->db->enableForeignKeyChecks();
 	}
 
 	public function down()
 	{
-		$this->db->disableForeignKeyChecks();
-		
 		$this->forge->dropTable('factories');
 		$this->forge->dropTable('factories_users');
 		$this->forge->dropTable('users');
 		$this->forge->dropTable('auth_groups');
 		$this->forge->dropTable('auth_groups_users');
-		
-		$this->db->enableForeignKeyChecks();
 	}
 }
