@@ -1,22 +1,26 @@
 <?php namespace Tatter\Permits\Config;
 
 use CodeIgniter\Config\BaseService;
-use CodeIgniter\Database\ConnectionInterface;
+use Tatter\Permits\Config\Permits as PermitsConfig;
 use Tatter\Permits\Interfaces\PermitsUserModelInterface;
+use Tatter\Permits\Permits;
 
 class Services extends BaseService
 {
-    public static function permits(BaseConfig $config = null, ConnectionInterface $db = null, PermitsUserModelInterface $userModel = null, bool $getShared = true)
-    {
-		if ($getShared):
-			return static::getSharedInstance('permits', $db, $userModel, $config);
-		endif;
+	/**
+	 * @param PermitsConfig|null             $config
+	 * @param PermitsUserModelInterface|null $userModel
+	 * @param boolean                        $getShared
+	 */
+	public static function permits(PermitsConfig $config = null, PermitsUserModelInterface $userModel = null, bool $getShared = true)
+	{
+		if ($getShared)
+		{
+			return static::getSharedInstance('permits', $config, $userModel);
+		}
 
-		// If no config was injected then load one
-		// Prioritizes app/Config if found
-		if (empty($config))
-			$config = config('Permits');
+		$config = $config ?? config('Permits');
 
-		return new \Tatter\Permits\Permits($config, $db, $userModel);
+		return new Permits($config, $userModel);
 	}
 }

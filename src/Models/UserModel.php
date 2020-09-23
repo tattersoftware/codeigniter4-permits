@@ -4,15 +4,13 @@ use CodeIgniter\Model;
 use Tatter\Permits\Interfaces\PermitsUserModelInterface;
 
 /**
- * 
  * This model is supplied as a bare minimum 'read-only' toolkit for
  * the Permits library. In most cases you will want to extend this
  * as a starting point, or replace it with your own user model.
  * This model expects:
- * 	- The corresponding group model, Tatter\Permits\Models\GroupModel
- * 	- Tables `users`, `auth_groups`, and `auth_groups_users` (will still be prefixed)
- * 	- Primary keys `id` on `users` and `auth_groups`; `user_id` and `group_id` on the pivot
- *
+ *     - The corresponding group model, Tatter\Permits\Models\GroupModel
+ *     - Tables `users`, `auth_groups`, and `auth_groups_users` (will still be prefixed)
+ *     - Primary keys `id` on `users` and `auth_groups`; `user_id` and `group_id` on the pivot
  */
 
 class UserModel extends Model implements PermitsUserModelInterface
@@ -34,6 +32,7 @@ class UserModel extends Model implements PermitsUserModelInterface
 
 	/**
 	 * Returns groups for a single user.
+	 *
 	 * @see https://github.com/lonnieezell/myth-auth/blob/develop/src/Authorization/GroupModel.php
 	 *
 	 * @param mixed $userId = null

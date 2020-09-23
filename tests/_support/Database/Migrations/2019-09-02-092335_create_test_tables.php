@@ -6,8 +6,6 @@ class CreateTestTables extends Migration
 {
 	public function up()
 	{
-		$this->db->disableForeignKeyChecks();
-		
 		// Factories
 		$fields = [
 			'group_id'       => ['type' => 'int', 'null' => true],
@@ -31,19 +29,19 @@ class CreateTestTables extends Migration
 		
 		$this->forge->createTable('factories');
         
-        // Factories-Users
-        $fields = [
+		// Factories-Users
+		$fields = [
             'factory_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             'user_id'  => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
         ];
-        $this->forge->addField($fields);
-        $this->forge->addKey(['factory_id', 'user_id']);
-        $this->forge->createTable('factories_users', true);
+		$this->forge->addField($fields);
+		$this->forge->addKey(['factory_id', 'user_id']);
+		$this->forge->createTable('factories_users', true);
 		
 		/* Test Auth tables modified from https://github.com/lonnieezell/myth-auth */
 
-        // Users
-        $this->forge->addField([
+		// Users
+		$this->forge->addField([
             'id'               => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
             'email'            => ['type' => 'varchar', 'constraint' => 255],
             'username'         => ['type' => 'varchar', 'constraint' => 30, 'null' => true],
@@ -61,10 +59,10 @@ class CreateTestTables extends Migration
             'updated_at'       => ['type' => 'datetime', 'null' => true],
             'deleted_at'       => ['type' => 'datetime', 'null' => true],
         ]);
-        $this->forge->addKey('id', true);
-        $this->forge->addUniqueKey('email');
-        $this->forge->addUniqueKey('username');
-        $this->forge->createTable('users', true);
+		$this->forge->addKey('id', true);
+		$this->forge->addUniqueKey('email');
+		$this->forge->addUniqueKey('username');
+		$this->forge->createTable('users', true);
 		
 		// Groups
 		$fields = [
@@ -72,34 +70,26 @@ class CreateTestTables extends Migration
             'name'        => ['type' => 'varchar', 'constraint' => 255],
             'description' => ['type' => 'varchar', 'constraint' => 255],
         ];
-        $this->forge->addField($fields);
-        $this->forge->addKey('id', true);
-        $this->forge->createTable('auth_groups', true);
+		$this->forge->addField($fields);
+		$this->forge->addKey('id', true);
+		$this->forge->createTable('auth_groups', true);
         
-        // Groups-Users
-        $fields = [
+		// Groups-Users
+		$fields = [
             'group_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             'user_id'  => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
         ];
-        $this->forge->addField($fields);
-        $this->forge->addKey(['group_id', 'user_id']);
-        $this->forge->addForeignKey('group_id', 'auth_groups', 'id', false, 'CASCADE');
-        $this->forge->addForeignKey('user_id', 'users', 'id', false, 'CASCADE');
-        $this->forge->createTable('auth_groups_users', true);
-        
-		$this->db->enableForeignKeyChecks();
+		$this->forge->addField($fields);
+		$this->forge->addKey(['group_id', 'user_id']);
+		$this->forge->createTable('auth_groups_users', true);
 	}
 
 	public function down()
 	{
-		$this->db->disableForeignKeyChecks();
-		
 		$this->forge->dropTable('factories');
 		$this->forge->dropTable('factories_users');
 		$this->forge->dropTable('users');
 		$this->forge->dropTable('auth_groups');
 		$this->forge->dropTable('auth_groups_users');
-		
-		$this->db->enableForeignKeyChecks();
 	}
 }

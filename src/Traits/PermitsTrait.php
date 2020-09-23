@@ -1,7 +1,5 @@
 <?php namespace Tatter\Permits\Traits;
 
-use Config\Services;
-
 trait PermitsTrait
 {
 	// Whether the current/supplied user may insert rows into this model's table
@@ -12,23 +10,23 @@ trait PermitsTrait
 		{
 			return true;
 		}
-		
+
 		// Load the library and check for a user
-		$permits = Services::permits();
-		$userId = $userId ?? $permits->sessionUserId();
+		$permits = service('permits');
+		$userId  = $userId ?? $permits->sessionUserId();
 
 		// Check for a permit
 		if ($permit = $permits->hasPermit($userId, 'create' . ucfirst($this->table)))
 		{
 			return true;
 		}
-		
+
 		// Make sure the mode is setup correctly
 		if (! is_octal($this->mode))
 		{
 			return false;
 		}
-			
+
 		// Check for domain writeable (create)
 		if ($permissions = mode2array($this->mode))
 		{
@@ -37,7 +35,7 @@ trait PermitsTrait
 
 		return false;
 	}
-	
+
 	// Whether the current/supplied user may read the given object
 	public function mayRead($object, int $userId = null): bool
 	{
@@ -46,45 +44,45 @@ trait PermitsTrait
 		{
 			return true;
 		}
-		
+
 		// Load the library and check for a user
-		$permits = Services::permits();
-		$userId = $userId ?? $permits->sessionUserId();
+		$permits = service('permits');
+		$userId  = $userId ?? $permits->sessionUserId();
 
 		// Check for an explicit permit
 		if ($permit = $permits->hasPermit($userId, 'read' . ucfirst($this->table)))
 		{
 			return true;
 		}
-		
+
 		// Make sure permissions are setup correctly
 		if (! $permits->isPermissible($object, $this))
 		{
 			return false;
 		}
 		$permissions = mode2array($this->mode);
-		
+
 		// Check if the object is world-readable
 		if ($permissions['world']['read'])
 		{
 			return true;
 		}
-		
+
 		// Check if the object is group-readable
 		if ($permissions['group']['read'] && $permits->userHasGroupOwnership($userId, $object, $this))
 		{
 			return true;
 		}
-		
+
 		// Check if the object is user-readable
 		if ($permissions['user']['read'] && $permits->userHasOwnership($userId, $object, $this))
 		{
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	// Whether the current/supplied user may update the given object
 	public function mayUpdate($object, int $userId = null): bool
 	{
@@ -93,19 +91,16 @@ trait PermitsTrait
 		{
 			return true;
 		}
-		
+
 		// Load the library and check for a user
-		$permits = Services::permits();
-		$userId = $userId ?? $permits->sessionUserId();
+		$permits = service('permits');
+		$userId  = $userId ?? $permits->sessionUserId();
 
 		// Check for a permit
 		if ($permit = $permits->hasPermit($userId, 'update' . ucfirst($this->table)))
 		{
 			return true;
 		}
-		
-		// Get the object
-		$object = $this->find($id);
 
 		// Make sure permissions are setup correctly
 		if (! $permits->isPermissible($object, $this))
@@ -119,22 +114,22 @@ trait PermitsTrait
 		{
 			return true;
 		}
-		
+
 		// Check if the object is group-writeable
 		if ($permissions['group']['write'] && $permits->userHasGroupOwnership($userId, $object, $this))
 		{
 			return true;
 		}
-		
+
 		// Check if the object is user-writeable
 		if ($permissions['user']['write'] && $permits->userHasOwnership($userId, $object, $this))
 		{
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	// Whether the current/supplied user may delete the given object
 	public function mayDelete($object, int $userId = null): bool
 	{
@@ -143,10 +138,10 @@ trait PermitsTrait
 		{
 			return true;
 		}
-		
+
 		return $this->mayUpdate($object, $userId);
 	}
-	
+
 	// Whether the current/supplied user may list rows from this model's table
 	public function mayList(int $userId = null): bool
 	{
@@ -155,45 +150,45 @@ trait PermitsTrait
 		{
 			return true;
 		}
-		
+
 		// Load the library and check for a user
-		$permits = Services::permits();
-		$userId = $userId ?? $permits->sessionUserId();
+		$permits = service('permits');
+		$userId  = $userId ?? $permits->sessionUserId();
 
 		// Check for a permit
 		if ($permit = $permits->hasPermit($userId, 'list' . ucfirst($this->table)))
 		{
 			return true;
 		}
-		
+
 		// Make sure permissions are setup correctly
 		if (! is_octal($this->mode))
 		{
 			return false;
 		}
-			
+
 		// Check if the domain is readable
 		if ($permissions = mode2array($this->mode))
 		{
 			return $permissions['domain']['read'];
 		}
-		
+
 		return false;
 	}
-	
+
 	// Whether the current/supplied user may perform any of the other actions
 	public function mayAdmin(int $userId = null): bool
 	{
 		// Load the library and check for a user
-		$permits = Services::permits();
-		$userId = $userId ?? $permits->sessionUserId();
+		$permits = service('permits');
+		$userId  = $userId ?? $permits->sessionUserId();
 
 		// Check for the permit
 		if ($permit = $permits->hasPermit($userId, 'admin' . ucfirst($this->table)))
 		{
 			return true;
 		}
-		
+
 		// Deny all other requests
 		return false;
 	}

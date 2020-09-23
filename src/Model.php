@@ -11,7 +11,7 @@ class Model extends \CodeIgniter\Model
 	 * 6 Owner  read, write
 	 * 6 Group  read, write
 	 * 4 World  read, no write
-	 */	
+	 */
 	protected $mode = 04664;
 	
 	// Name of the user ID in this model's objects

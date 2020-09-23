@@ -2,11 +2,11 @@
 
 class HelperTest extends \CodeIgniter\Test\CIUnitTestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-        helper('chmod');
-    }
+	public function setUp(): void
+	{
+		parent::setUp();
+		helper('chmod');
+	}
 
 	public function testIsOctalTrue()
 	{

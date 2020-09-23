@@ -21,24 +21,23 @@ class PermitsFilter implements FilterInterface
 	 * @param \CodeIgniter\HTTP\RequestInterface $request
 	 * @param null                               $arguments
 	 *
-	 * @return RedirectResponse|null
+	 * @return RedirectResponse|void
 	 * @throws PermitsException
 	 */
 	public function before(RequestInterface $request, $arguments = null)
-    {
-	    if (empty($arguments))
-	    {
+	{
+		if (empty($arguments))
+		{
 			return;
 		}
-        $permits = services('permits');
+		$permits = service('permits');
 
-        if (! $userId = $permits->sessionUserId())
-        {
-        	return;
-        }
+		if (! $userId = $permits->sessionUserId())
+		{
+			return;
+		}
 
-        // Check each requested permission
-        $result = true;
+		// Check each requested permission
 		foreach ($arguments as $permission)
 		{
 			if (! $permits->hasPermit($userId, $permission))
@@ -54,8 +53,8 @@ class PermitsFilter implements FilterInterface
 			}
 		}
 
-        return;
-    }
+		return;
+	}
 
 	/**
 	 * Allows After filters to inspect and modify the response
@@ -70,6 +69,6 @@ class PermitsFilter implements FilterInterface
 	 * @return mixed
 	 */
 	public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
-    {
-    }
+	{
+	}
 }
