@@ -12,10 +12,10 @@ class PermitsList extends BaseCommand
 	public function run(array $params)
 	{
 		$db = db_connect();
-		
+
 		// User permits
-		CLI::write(" USER PERMITS ", 'white', 'black');
-		
+		CLI::write(' USER PERMITS ', 'white', 'black');
+
 		// get all user permits
 		$rows = $db->table('permits')->select('user_id, name, created_by, created_at')
 			->where('user_id >', 0)
@@ -25,17 +25,22 @@ class PermitsList extends BaseCommand
 
 		if (empty($rows))
 		{
-			CLI::write( CLI::color("No user permits granted.", 'yellow') );
+			CLI::write( CLI::color('No user permits granted.', 'yellow') );
 		}
 		else
 		{
-			$thead = ['User ID', 'Permission', 'Granted By', 'Granted Date'];
+			$thead = [
+				'User ID',
+				'Permission',
+				'Granted By',
+				'Granted Date',
+			];
 			CLI::table($rows, $thead);
 		}
 
 		// Group permits
-		CLI::write(" GROUP PERMITS ", 'white', 'black');
-		
+		CLI::write(' GROUP PERMITS ', 'white', 'black');
+
 		// get all user permits
 		$rows = $db->table('permits')->select('group_id, name, created_by, created_at')
 			->where('group_id >', 0)
@@ -45,11 +50,16 @@ class PermitsList extends BaseCommand
 
 		if (empty($rows))
 		{
-			CLI::write( CLI::color("No group permits granted.", 'yellow') );
+			CLI::write( CLI::color('No group permits granted.', 'yellow') );
 		}
 		else
 		{
-			$thead = ['Group ID', 'Permission', 'Granted By', 'Granted Date'];
+			$thead = [
+				'Group ID',
+				'Permission',
+				'Granted By',
+				'Granted Date',
+			];
 			CLI::table($rows, $thead);
 		}
 	}

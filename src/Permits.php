@@ -6,7 +6,6 @@ use Tatter\Permits\Interfaces\PermitsUserModelInterface;
 use Tatter\Permits\Models\PermitModel;
 use Tatter\Permits\Models\UserModel;
 
-/*** CLASS ***/
 class Permits
 {
 	/**
@@ -33,7 +32,7 @@ class Permits
 	/**
 	 * Initializes the library.
 	 *
-	 * @param PermitsConfig $config
+	 * @param PermitsConfig                  $config
 	 * @param PermitsUserModelInterface|null $userModel
 	 */
 	public function __construct(PermitsConfig $config, PermitsUserModelInterface $userModel = null)
@@ -51,7 +50,7 @@ class Permits
 	/**
 	 * Checks for a logged in user based on the configured key.
 	 *
-	 * @return int  The user ID, 0 for "not logged in", -1 for CLI
+	 * @return integer  The user ID, 0 for "not logged in", -1 for CLI
 	 */
 	public function sessionUserId(): int
 	{
@@ -62,7 +61,7 @@ class Permits
 
 		return session($this->config->sessionUserId) ?? 0;
 	}
-	
+
 	// try to cache a permit and pass it back
 	protected function cache($key, $permit)
 	{
@@ -72,7 +71,7 @@ class Permits
 		}
 		return $permit;
 	}
-	
+
 	// series fo checks to ensure input is a valid object and model has permissions setup
 	public function isPermissible($object, $objectModel): bool
 	{
@@ -86,7 +85,7 @@ class Permits
 		}
 		return true;
 	}
-	
+
 	// checks if user is a member of the supplied group
 	public function userHasGroup(int $userId, int $groupId): ?bool
 	{
@@ -97,15 +96,15 @@ class Permits
 
 		foreach ($this->userModel->groups($userId) as $group)
 		{
-			if ($groupId==$group->id)
+			if ($groupId === $group->id)
 			{
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	// checks if user is one of an object's owners
 	public function userHasOwnership(int $userId, $object, $objectModel): bool
 	{
@@ -114,19 +113,19 @@ class Permits
 		{
 			return false;
 		}
-		
+
 		// if input is an array, convert it
-		if (gettype($object)=='array')
+		if (gettype($object) === 'array')
 		{
 			$object = (object) $object;
 		}
-			
+
 		// check if the object itself has $userKey set
 		if ($object->{$objectModel->userKey})
 		{
-			return ($userId==$object->{$objectModel->userKey});
-		
-		// otherwise, check for a valid pivot table
+			return ($userId === $object->{$objectModel->userKey});
+
+			// otherwise, check for a valid pivot table
 		}
 		elseif (! empty($objectModel->usersPivot))
 		{
@@ -135,10 +134,10 @@ class Permits
 				->get()->getResult();
 			return ! empty($test);
 		}
-		
+
 		return false;
 	}
-	
+
 	// checks if user is a member of an object's groups
 	public function userHasGroupOwnership(int $userId, $object, $objectModel): ?bool
 	{
@@ -146,9 +145,9 @@ class Permits
 		{
 			return null;
 		}
-		
+
 		// if input is an array, convert it
-		if (gettype($object)=='array')
+		if (gettype($object) === 'array')
 		{
 			$object = (object) $object;
 		}
@@ -164,8 +163,8 @@ class Permits
 		{
 			// check if this is a group the user is a part of
 			return $this->userHasGroup($userId, $groupId);
-		
-		// otherwise, check for a valid pivot table
+
+			// otherwise, check for a valid pivot table
 		}
 		elseif (! empty($objectModel->groupsPivot))
 		{
@@ -174,10 +173,10 @@ class Permits
 				->get()->getResult();
 			return ! empty($test);
 		}
-		
+
 		return false;
 	}
-	
+
 	// check if user has direct permit or inherited group permit
 	public function hasPermit(?int $userId, string $name): bool
 	{
@@ -185,26 +184,26 @@ class Permits
 		{
 			return false;
 		}
-			
+
 		// check for cached version
 		$cacheKey = "permits:{$name}:{$userId}";
-		$permit = cache($cacheKey);
+		$permit   = cache($cacheKey);
 		if ($permit !== null)
 		{
 			return ! empty($this->cache($cacheKey, $permit));
 		}
-		
+
 		// check database for user permit
 		if ($permit = $this->hasUserPermit($userId, $name))
 		{
 			return ! empty($this->cache($cacheKey, $permit));
 		}
-		
+
 		if (! $this->config->useGroups)
 		{
 			return false;
 		}
-		
+
 		// check database for each of user's groups
 		foreach ($this->userModel->groups($userId) as $group)
 		{
@@ -213,10 +212,10 @@ class Permits
 				return $this->cache($cacheKey, $permit);
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	// checks for global permit for one user, ignoring groups
 	public function hasUserPermit(int $userId, string $name): ?bool
 	{
@@ -225,13 +224,12 @@ class Permits
 			return null;
 		}
 
-		return ! empty($this->permitModel
+		return (bool) $this->permitModel
 			->where('user_id', $userId)
 			->where('name', $name)
-			->first()
-		);
+			->first();
 	}
-	
+
 	// checks for global permit for one group
 	public function hasGroupPermit(int $groupId, string $name): ?bool
 	{

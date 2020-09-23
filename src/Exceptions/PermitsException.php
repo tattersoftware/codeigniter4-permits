@@ -8,17 +8,17 @@ class PermitsException extends \RuntimeException implements ExceptionInterface
 	{
 		return new static(lang('Permits.missingDatabaseTable', [$table]));
 	}
-	
+
 	public static function forInvalidModeType(string $table)
 	{
 		return new static(lang('Permits.invalidModelType', [$table]));
 	}
-	
+
 	public static function forInvalidMode(string $table, string $mode)
 	{
 		return new static(lang('Permits.invalidMode', [$table, $mode]));
 	}
-	
+
 	// Generic 'not allowed' exception
 	public static function forNotPermitted()
 	{

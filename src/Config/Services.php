@@ -8,9 +8,9 @@ use Tatter\Permits\Permits;
 class Services extends BaseService
 {
 	/**
-	 * @param PermitsConfig|null $config
+	 * @param PermitsConfig|null             $config
 	 * @param PermitsUserModelInterface|null $userModel
-	 * @param bool $getShared
+	 * @param boolean                        $getShared
 	 */
 	public static function permits(PermitsConfig $config = null, PermitsUserModelInterface $userModel = null, bool $getShared = true)
 	{

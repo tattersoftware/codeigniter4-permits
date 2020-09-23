@@ -1,8 +1,5 @@
 <?php namespace Tests\Support;
 
-use CodeIgniter\Session\Handlers\ArrayHandler;
-use CodeIgniter\Test\Mock\MockSession;;
-
 class PermitsTestCase extends \CodeIgniter\Test\CIDatabaseTestCase
 {
 	/**

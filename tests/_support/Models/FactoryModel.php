@@ -7,17 +7,24 @@ class FactoryModel extends Model
 	protected $table      = 'factories';
 	protected $primaryKey = 'id';
 
-	protected $returnType = 'object';
+	protected $returnType     = 'object';
 	protected $useSoftDeletes = false;
 
-	protected $allowedFields = ['group_id', 'name', 'uid', 'class', 'icon', 'summary'];
+	protected $allowedFields = [
+		'group_id',
+		'name',
+		'uid',
+		'class',
+		'icon',
+		'summary',
+	];
 
 	protected $useTimestamps = true;
 
 	protected $validationRules    = [];
 	protected $validationMessages = [];
 	protected $skipValidation     = false;
-	
+
 	// Permits
 	public $mode       = 04660;
 	public $groupKey   = 'group_id';
