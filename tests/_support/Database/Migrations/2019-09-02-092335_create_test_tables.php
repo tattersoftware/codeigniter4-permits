@@ -29,19 +29,19 @@ class CreateTestTables extends Migration
 		
 		$this->forge->createTable('factories');
         
-        // Factories-Users
-        $fields = [
+		// Factories-Users
+		$fields = [
             'factory_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             'user_id'  => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
         ];
-        $this->forge->addField($fields);
-        $this->forge->addKey(['factory_id', 'user_id']);
-        $this->forge->createTable('factories_users', true);
+		$this->forge->addField($fields);
+		$this->forge->addKey(['factory_id', 'user_id']);
+		$this->forge->createTable('factories_users', true);
 		
 		/* Test Auth tables modified from https://github.com/lonnieezell/myth-auth */
 
-        // Users
-        $this->forge->addField([
+		// Users
+		$this->forge->addField([
             'id'               => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'auto_increment' => true],
             'email'            => ['type' => 'varchar', 'constraint' => 255],
             'username'         => ['type' => 'varchar', 'constraint' => 30, 'null' => true],
@@ -59,10 +59,10 @@ class CreateTestTables extends Migration
             'updated_at'       => ['type' => 'datetime', 'null' => true],
             'deleted_at'       => ['type' => 'datetime', 'null' => true],
         ]);
-        $this->forge->addKey('id', true);
-        $this->forge->addUniqueKey('email');
-        $this->forge->addUniqueKey('username');
-        $this->forge->createTable('users', true);
+		$this->forge->addKey('id', true);
+		$this->forge->addUniqueKey('email');
+		$this->forge->addUniqueKey('username');
+		$this->forge->createTable('users', true);
 		
 		// Groups
 		$fields = [
@@ -70,18 +70,18 @@ class CreateTestTables extends Migration
             'name'        => ['type' => 'varchar', 'constraint' => 255],
             'description' => ['type' => 'varchar', 'constraint' => 255],
         ];
-        $this->forge->addField($fields);
-        $this->forge->addKey('id', true);
-        $this->forge->createTable('auth_groups', true);
+		$this->forge->addField($fields);
+		$this->forge->addKey('id', true);
+		$this->forge->createTable('auth_groups', true);
         
-        // Groups-Users
-        $fields = [
+		// Groups-Users
+		$fields = [
             'group_id' => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
             'user_id'  => ['type' => 'int', 'constraint' => 11, 'unsigned' => true, 'default' => 0],
         ];
-        $this->forge->addField($fields);
-        $this->forge->addKey(['group_id', 'user_id']);
-        $this->forge->createTable('auth_groups_users', true);
+		$this->forge->addField($fields);
+		$this->forge->addKey(['group_id', 'user_id']);
+		$this->forge->createTable('auth_groups_users', true);
 	}
 
 	public function down()

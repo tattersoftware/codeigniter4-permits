@@ -5,12 +5,12 @@ use CodeIgniter\CLI\CLI;
 
 class PermitsList extends BaseCommand
 {
-    protected $group       = 'Permits';
-    protected $name        = 'permits:list';
-    protected $description = 'Lists permits assigned explicitly in the database.';
+	protected $group       = 'Permits';
+	protected $name        = 'permits:list';
+	protected $description = 'Lists permits assigned explicitly in the database.';
 
-    public function run(array $params)
-    {
+	public function run(array $params)
+	{
 		$db = db_connect();
 		
 		// User permits
@@ -23,12 +23,15 @@ class PermitsList extends BaseCommand
 			->orderBy('name', 'asc')
 			->get()->getResultArray();
 
-		if (empty($rows)):
+		if (empty($rows))
+		{
 			CLI::write( CLI::color("No user permits granted.", 'yellow') );
-		else:
+		}
+		else
+		{
 			$thead = ['User ID', 'Permission', 'Granted By', 'Granted Date'];
 			CLI::table($rows, $thead);
-		endif;
+		}
 
 		// Group permits
 		CLI::write(" GROUP PERMITS ", 'white', 'black');
@@ -40,12 +43,14 @@ class PermitsList extends BaseCommand
 			->orderBy('name', 'asc')
 			->get()->getResultArray();
 
-		if (empty($rows)):
+		if (empty($rows))
+		{
 			CLI::write( CLI::color("No group permits granted.", 'yellow') );
-		else:
+		}
+		else
+		{
 			$thead = ['Group ID', 'Permission', 'Granted By', 'Granted Date'];
 			CLI::table($rows, $thead);
-		endif;
-
+		}
 	}
 }

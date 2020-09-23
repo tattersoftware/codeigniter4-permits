@@ -3,7 +3,7 @@
 class PermitSeeder extends \CodeIgniter\Database\Seeder
 {
 	public function run()
-	{	
+	{
 		/* Test Auth seeds modified from https://github.com/lonnieezell/myth-auth */
 		
 		// USERS
@@ -137,6 +137,6 @@ class PermitSeeder extends \CodeIgniter\Database\Seeder
 		foreach ($rows as $row)
 		{
 			$builder->insert($row);
-		}		
+		}
 	}
 }

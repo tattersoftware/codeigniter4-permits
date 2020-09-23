@@ -6,9 +6,9 @@ use Tatter\Permits\Models\PermitModel;
 
 class PermitsAdd extends BaseCommand
 {
-    protected $group       = 'Permits';
-    protected $name        = 'permits:add';
-    protected $description = "Adds a permit to the database.";
+	protected $group       = 'Permits';
+	protected $name        = 'permits:add';
+	protected $description = "Adds a permit to the database.";
     
 	protected $usage     = "permits:add [permission] [target] [id]";
 	protected $arguments = [
@@ -18,7 +18,7 @@ class PermitsAdd extends BaseCommand
 	];
 
 	public function run(array $params = [])
-    {
+	{
 		$permits = new PermitModel();
 		
 		// Consume or prompt for the permission name

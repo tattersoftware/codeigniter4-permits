@@ -37,7 +37,7 @@ class Permits
 	 * @param PermitsUserModelInterface|null $userModel
 	 */
 	public function __construct(PermitsConfig $config, PermitsUserModelInterface $userModel = null)
-	{		
+	{
 		$this->config = $config;
 
 		// Load the models
@@ -67,7 +67,9 @@ class Permits
 	protected function cache($key, $permit)
 	{
 		if ($duration = $this->config->cacheDuration)
+		{
 			cache()->save($key, $permit, $duration);
+		}
 		return $permit;
 	}
 	
@@ -75,9 +77,13 @@ class Permits
 	public function isPermissible($object, $objectModel): bool
 	{
 		if (! is_octal($objectModel->mode))
+		{
 			return false;
+		}
 		if (empty($object))
+		{
 			return false;
+		}
 		return true;
 	}
 	
@@ -85,12 +91,17 @@ class Permits
 	public function userHasGroup(int $userId, int $groupId): ?bool
 	{
 		if (! $this->config->useGroups)
+		{
 			return null;
+		}
 
-		foreach ($this->userModel->groups($userId) as $group):
+		foreach ($this->userModel->groups($userId) as $group)
+		{
 			if ($groupId==$group->id)
+			{
 				return true;
-		endforeach;
+			}
+		}
 		
 		return false;
 	}
@@ -100,23 +111,30 @@ class Permits
 	{
 		// make sure the model has the necessary info
 		if (empty($objectModel->userKey))
+		{
 			return false;
+		}
 		
 		// if input is an array, convert it
 		if (gettype($object)=='array')
+		{
 			$object = (object) $object;
+		}
 			
 		// check if the object itself has $userKey set
-		if ($object->{$objectModel->userKey}):
+		if ($object->{$objectModel->userKey})
+		{
 			return ($userId==$object->{$objectModel->userKey});
 		
 		// otherwise, check for a valid pivot table
-		elseif (! empty($objectModel->usersPivot)):
+		}
+		elseif (! empty($objectModel->usersPivot))
+		{
 			// @phpstan-ignore-next-line
 			$test = $objectModel->builder($objectModel->usersPivot)->where($objectModel->userKey, $userId)->where($objectModel->pivotKey, $object->{$objectModel->primaryKey})
 				->get()->getResult();
 			return ! empty($test);
-		endif;
+		}
 		
 		return false;
 	}
@@ -125,28 +143,37 @@ class Permits
 	public function userHasGroupOwnership(int $userId, $object, $objectModel): ?bool
 	{
 		if (! $this->config->useGroups)
+		{
 			return null;
+		}
 		
 		// if input is an array, convert it
 		if (gettype($object)=='array')
+		{
 			$object = (object) $object;
+		}
 
 		// make sure the model has the necessary info
 		if (empty($objectModel->groupKey))
+		{
 			return false;
+		}
 
 		// check if the object itself has $groupKey set
-		if ($groupId = $object->{$objectModel->groupKey}):
+		if ($groupId = $object->{$objectModel->groupKey})
+		{
 			// check if this is a group the user is a part of
 			return $this->userHasGroup($userId, $groupId);
 		
 		// otherwise, check for a valid pivot table
-		elseif (! empty($objectModel->groupsPivot)):
+		}
+		elseif (! empty($objectModel->groupsPivot))
+		{
 			// @phpstan-ignore-next-line
 			$test = $objectModel->builder($objectModel->groupsPivot)->where($objectModel->groupKey, $userId)->where($objectModel->pivotKey, $object->{$objectModel->primaryKey})
 				->get()->getResult();
 			return ! empty($test);
-		endif;
+		}
 		
 		return false;
 	}
@@ -194,7 +221,9 @@ class Permits
 	public function hasUserPermit(int $userId, string $name): ?bool
 	{
 		if (empty($userId))
+		{
 			return null;
+		}
 
 		return ! empty($this->permitModel
 			->where('user_id', $userId)
@@ -207,14 +236,18 @@ class Permits
 	public function hasGroupPermit(int $groupId, string $name): ?bool
 	{
 		if (! $this->config->useGroups)
+		{
 			return null;
+		}
 		if (empty($groupId))
+		{
 			return null;
+		}
 
 		return ! empty($this->permitModel
 			->where('group_id', $groupId)
 			->where('name', $name)
 			->first()
-		);		
+		);
 	}
 }
