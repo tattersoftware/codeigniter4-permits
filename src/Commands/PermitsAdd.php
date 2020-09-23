@@ -6,7 +6,7 @@ use Tatter\Permits\Models\PermitModel;
 
 class PermitsAdd extends BaseCommand
 {
-	protected $group       = 'Permits';
+	protected $group       = 'Auth';
 	protected $name        = 'permits:add';
 	protected $description = 'Adds a permit to the database.';
 

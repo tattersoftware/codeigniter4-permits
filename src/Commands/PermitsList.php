@@ -5,7 +5,7 @@ use CodeIgniter\CLI\CLI;
 
 class PermitsList extends BaseCommand
 {
-	protected $group       = 'Permits';
+	protected $group       = 'Auth';
 	protected $name        = 'permits:list';
 	protected $description = 'Lists permits assigned explicitly in the database.';
 
@@ -29,12 +29,7 @@ class PermitsList extends BaseCommand
 		}
 		else
 		{
-			$thead = [
-				'User ID',
-				'Permission',
-				'Granted By',
-				'Granted Date',
-			];
+			$thead = ['User ID', 'Permission', 'Granted By', 'Granted Date'];
 			CLI::table($rows, $thead);
 		}
 
@@ -54,12 +49,7 @@ class PermitsList extends BaseCommand
 		}
 		else
 		{
-			$thead = [
-				'Group ID',
-				'Permission',
-				'Granted By',
-				'Granted Date',
-			];
+			$thead = ['Group ID', 'Permission', 'Granted By', 'Granted Date'];
 			CLI::table($rows, $thead);
 		}
 	}
