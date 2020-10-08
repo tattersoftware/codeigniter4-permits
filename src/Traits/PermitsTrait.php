@@ -1,5 +1,7 @@
 <?php namespace Tatter\Permits\Traits;
 
+use Tatter\Permits\Exceptions\PermitsException;
+
 trait PermitsTrait
 {
 	// Whether the current/supplied user may insert rows into this model's table
@@ -191,5 +193,35 @@ trait PermitsTrait
 
 		// Deny all other requests
 		return false;
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Changes the access mode.
+	 *
+	 * @param int $mode Integer representation of octal mode. Default 04664
+	 *
+	 * @return $this
+	 */
+	public function setMode(int $mode): self
+	{
+		if (! is_octal($mode))
+		{
+			throw new PermitsException($this->table, $mode);
+		}
+		$this->mode = $mode;
+
+		return $this;
+	}
+
+	/**
+	 * Returns the access mode.
+	 *
+	 * @return int Integer representation of octal mode. Default 04664
+	 */
+	public function getMode(): int
+	{
+		return $this->mode;
 	}
 }
