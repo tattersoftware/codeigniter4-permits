@@ -206,6 +206,7 @@ trait PermitsTrait
 	 */
 	public function setMode(int $mode): self
 	{
+		helper('chmod');
 		if (! is_octal($mode))
 		{
 			throw new PermitsException($this->table, $mode);
