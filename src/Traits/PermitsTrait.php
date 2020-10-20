@@ -29,10 +29,22 @@ trait PermitsTrait
 			return false;
 		}
 
-		// Check for domain writeable (create)
-		if ($permissions = mode2array($this->mode))
+		// Verify the mode
+		if (! $permissions = mode2array($this->mode))
 		{
-			return $permissions['domain']['write'];
+			return false;
+		}
+
+		// Check for domain writeable (create)
+		if ($permissions['domain']['write'])
+		{
+			return true;
+		}
+
+		// If logged in then check for user writable
+		if ($userId && $permissions['user']['write'])
+		{
+			return true;
 		}
 
 		return false;
