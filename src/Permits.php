@@ -130,7 +130,7 @@ class Permits
 		elseif (! empty($objectModel->usersPivot))
 		{
 			// @phpstan-ignore-next-line
-			$test = $objectModel->builder($objectModel->usersPivot)->where($objectModel->userKey, $userId)->where($objectModel->pivotKey, $object->{$objectModel->primaryKey})
+			$test = $objectModel->db->table($objectModel->usersPivot)->where($objectModel->userKey, $userId)->where($objectModel->pivotKey, $object->{$objectModel->primaryKey})
 				->get()->getResult();
 			return ! empty($test);
 		}
