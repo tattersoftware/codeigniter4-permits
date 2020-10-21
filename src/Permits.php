@@ -168,10 +168,9 @@ class Permits
 		}
 		elseif (! empty($objectModel->groupsPivot))
 		{
-			// @phpstan-ignore-next-line
-			$test = $objectModel->builder($objectModel->groupsPivot)->where($objectModel->groupKey, $userId)->where($objectModel->pivotKey, $object->{$objectModel->primaryKey})
+			 // @phpstan-ignore-next-line
+			return (bool) $objectModel->db->table($objectModel->groupsPivot)->where($objectModel->groupKey, $userId)->where($objectModel->pivotKey, $object->{$objectModel->primaryKey}) // @phpstan-ignore-line
 				->get()->getResult();
-			return ! empty($test);
 		}
 
 		return false;
