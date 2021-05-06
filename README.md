@@ -1,9 +1,9 @@
 # Tatter\Permits
 Dynamic permission handling for CodeIgniter 4
 
-[![](https://github.com/tattersofware/codeigniter4-permits/workflows/PHPUnit/badge.svg)](https://github.com/tattersofware/codeigniter4-permits/actions?query=workflow%3A%22PHPUnit)
-[![](https://github.com/tattersofware/codeigniter4-permits/workflows/PHPStan/badge.svg)](https://github.com/tattersofware/codeigniter4-permits/actions?query=workflow%3A%22PHPStan)
-[![Coverage Status](https://coveralls.io/repos/github/tattersofware/codeigniter4-permits/badge.svg?branch=develop)](https://coveralls.io/github/tattersofware/codeigniter4-permits?branch=develop)
+[![](https://github.com/tattersoftware/codeigniter4-permits/workflows/PHPUnit/badge.svg)](https://github.com/tattersoftware/codeigniter4-permits/actions?query=workflow%3A%22PHPUnit)
+[![](https://github.com/tattersoftware/codeigniter4-permits/workflows/PHPStan/badge.svg)](https://github.com/tattersoftware/codeigniter4-permits/actions?query=workflow%3A%22PHPStan)
+[![Coverage Status](https://coveralls.io/repos/github/tattersoftware/codeigniter4-permits/badge.svg?branch=develop)](https://coveralls.io/github/tattersoftware/codeigniter4-permits?branch=develop)
 
 ## Quick Start
 
