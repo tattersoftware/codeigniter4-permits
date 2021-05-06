@@ -130,9 +130,8 @@ class Permits
 		elseif (! empty($objectModel->usersPivot))
 		{
 			// @phpstan-ignore-next-line
-			$test = $objectModel->db->table($objectModel->usersPivot)->where($objectModel->userKey, $userId)->where($objectModel->pivotKey, $object->{$objectModel->primaryKey})
+			return (bool) $objectModel->db->table($objectModel->usersPivot)->where($objectModel->userKey, $userId)->where($objectModel->pivotKey, $object->{$objectModel->primaryKey})
 				->get()->getResult();
-			return ! empty($test);
 		}
 
 		return false;
@@ -168,7 +167,7 @@ class Permits
 		}
 		elseif (! empty($objectModel->groupsPivot))
 		{
-			 // @phpstan-ignore-next-line
+			// @phpstan-ignore-next-line
 			return (bool) $objectModel->db->table($objectModel->groupsPivot)->where($objectModel->groupKey, $userId)->where($objectModel->pivotKey, $object->{$objectModel->primaryKey}) // @phpstan-ignore-line
 				->get()->getResult();
 		}
@@ -185,7 +184,7 @@ class Permits
 		}
 
 		// check for cached version
-		$cacheKey = "permits:{$name}:{$userId}";
+		$cacheKey = "permits-{$name}-{$userId}";
 		$permit   = cache($cacheKey);
 		if ($permit !== null)
 		{
@@ -223,6 +222,7 @@ class Permits
 			return null;
 		}
 
+		// @phpstan-ignore-next-line
 		return (bool) $this->permitModel
 			->where('user_id', $userId)
 			->where('name', $name)
@@ -241,6 +241,7 @@ class Permits
 			return null;
 		}
 
+		// @phpstan-ignore-next-line
 		return ! empty($this->permitModel
 			->where('group_id', $groupId)
 			->where('name', $name)
