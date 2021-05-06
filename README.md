@@ -1,6 +1,10 @@
 # Tatter\Permits
 Dynamic permission handling for CodeIgniter 4
 
+[![](https://github.com/tattersofware/codeigniter4-permits/workflows/PHPUnit/badge.svg)](https://github.com/tattersofware/codeigniter4-permits/actions?query=workflow%3A%22PHPUnit)
+[![](https://github.com/tattersofware/codeigniter4-permits/workflows/PHPStan/badge.svg)](https://github.com/tattersofware/codeigniter4-permits/actions?query=workflow%3A%22PHPStan)
+[![Coverage Status](https://coveralls.io/repos/github/tattersofware/codeigniter4-permits/badge.svg?branch=develop)](https://coveralls.io/github/tattersofware/codeigniter4-permits?branch=develop)
+
 ## Quick Start
 
 1. Install with Composer: `> composer require tatter/permits`
@@ -32,7 +36,7 @@ to ensure the database is setup correctly:
 ## Configuration (optional)
 
 The library's default behavior can be altered by extending its config file. Copy
-**bin/Permits.php to **app/Config/** and follow the instructions in the comments.
+**examples/Permits.php to **app/Config/** and follow the instructions in the comments.
 If no config file is found in app/Config the library will use its own.
 
 ## Usage
