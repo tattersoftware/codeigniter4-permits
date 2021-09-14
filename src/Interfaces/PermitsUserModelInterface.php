@@ -1,4 +1,6 @@
-<?php namespace Tatter\Permits\Interfaces;
+<?php
+
+namespace Tatter\Permits\Interfaces;
 
 interface PermitsUserModelInterface
 {
@@ -7,7 +9,7 @@ interface PermitsUserModelInterface
 	 *
 	 * @param mixed $userId = null
 	 *
-	 * @return array  Usually Group Entities
+	 * @return array Usually Group Entities
 	 */
 	public function groups($userId = null): array;
 }

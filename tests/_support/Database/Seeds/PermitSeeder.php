@@ -1,10 +1,12 @@
-<?php namespace Tests\Support\Database\Seeds;
+<?php
+
+namespace Tests\Support\Database\Seeds;
 
 class PermitSeeder extends \CodeIgniter\Database\Seeder
 {
 	public function run()
 	{
-		/* Test Auth seeds modified from https://github.com/lonnieezell/myth-auth */
+		// Test Auth seeds modified from https://github.com/lonnieezell/myth-auth
 
 		// USERS
 		$users = [
@@ -78,7 +80,7 @@ class PermitSeeder extends \CodeIgniter\Database\Seeder
 			$builder->insert($row);
 		}
 
-		/* Industrial seeds */
+		// Industrial seeds
 
 		// FACTORIES
 		$factories = [

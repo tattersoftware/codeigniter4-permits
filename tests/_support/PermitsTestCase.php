@@ -1,11 +1,16 @@
-<?php namespace Tests\Support;
+<?php
 
-class PermitsTestCase extends \CodeIgniter\Test\CIDatabaseTestCase
+namespace Tests\Support;
+
+/**
+ * @internal
+ */
+abstract class PermitsTestCase extends \CodeIgniter\Test\CIDatabaseTestCase
 {
 	/**
 	 * Should the database be refreshed before each test?
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	protected $refresh = true;
 
@@ -13,7 +18,7 @@ class PermitsTestCase extends \CodeIgniter\Test\CIDatabaseTestCase
 	 * The seed file(s) used for all tests within this test case.
 	 * Should be fully-namespaced or relative to $basePath
 	 *
-	 * @var string|array
+	 * @var array|string
 	 */
 	protected $seed = 'Tests\Support\Database\Seeds\PermitSeeder';
 
@@ -31,7 +36,7 @@ class PermitsTestCase extends \CodeIgniter\Test\CIDatabaseTestCase
 	 * Note that running "all" runs migrations in date order,
 	 * but specifying namespaces runs them in namespace order (then date)
 	 *
-	 * @var string|array|null
+	 * @var array|string|null
 	 */
 	protected $namespace = [
 		'Tests\Support',

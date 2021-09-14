@@ -1,4 +1,6 @@
-<?php namespace Tatter\Permits\Commands;
+<?php
+
+namespace Tatter\Permits\Commands;
 
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
@@ -46,14 +48,12 @@ class PermitsAdd extends BaseCommand
 		{
 			$row['group_id'] = $id;
 		}
-		else
-		{
+		else {
 			$row['user_id'] = $id;
 		}
 		$row['name'] = $permission;
 
-		try
-		{
+		try {
 			$permits->save($row);
 		}
 		catch (\Exception $e)

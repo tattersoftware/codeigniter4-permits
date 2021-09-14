@@ -1,6 +1,7 @@
-<?php namespace Tatter\Permits;
+<?php
 
-use Config\Services;
+namespace Tatter\Permits;
+
 use Tatter\Permits\Config\Permits as PermitsConfig;
 use Tatter\Permits\Interfaces\PermitsUserModelInterface;
 use Tatter\Permits\Models\PermitModel;
@@ -27,15 +28,12 @@ class Permits
 	 *
 	 * @var PermitsUserModelInterface
 	 */
-	protected $userModel = null;
+	protected $userModel;
 
 	/**
 	 * Initializes the library.
-	 *
-	 * @param PermitsConfig                  $config
-	 * @param PermitsUserModelInterface|null $userModel
 	 */
-	public function __construct(PermitsConfig $config, PermitsUserModelInterface $userModel = null)
+	public function __construct(PermitsConfig $config, ?PermitsUserModelInterface $userModel = null)
 	{
 		$this->config = $config;
 
@@ -50,7 +48,7 @@ class Permits
 	/**
 	 * Checks for a logged in user based on the configured key.
 	 *
-	 * @return integer  The user ID, 0 for "not logged in", -1 for CLI
+	 * @return int The user ID, 0 for "not logged in", -1 for CLI
 	 */
 	public function sessionUserId(): int
 	{
@@ -69,6 +67,7 @@ class Permits
 		{
 			cache()->save($key, $permit, $duration);
 		}
+
 		return $permit;
 	}
 
@@ -79,11 +78,8 @@ class Permits
 		{
 			return false;
 		}
-		if (empty($object))
-		{
-			return false;
-		}
-		return true;
+
+		return ! (empty($object));
 	}
 
 	// checks if user is a member of the supplied group
@@ -123,15 +119,15 @@ class Permits
 		// check if the object itself has $userKey set
 		if ($object->{$objectModel->userKey})
 		{
-			return ($userId === $object->{$objectModel->userKey});
+			return $userId === $object->{$objectModel->userKey};
 
 			// otherwise, check for a valid pivot table
 		}
-		elseif (! empty($objectModel->usersPivot))
+		if (! empty($objectModel->usersPivot))
 		{
 			// @phpstan-ignore-next-line
 			return (bool) $objectModel->db->table($objectModel->usersPivot)->where($objectModel->userKey, $userId)->where($objectModel->pivotKey, $object->{$objectModel->primaryKey})
-				->get()->getResult();
+			    ->get()->getResult();
 		}
 
 		return false;
@@ -165,11 +161,11 @@ class Permits
 
 			// otherwise, check for a valid pivot table
 		}
-		elseif (! empty($objectModel->groupsPivot))
+		if (! empty($objectModel->groupsPivot))
 		{
 			// @phpstan-ignore-next-line
 			return (bool) $objectModel->db->table($objectModel->groupsPivot)->where($objectModel->groupKey, $userId)->where($objectModel->pivotKey, $object->{$objectModel->primaryKey}) // @phpstan-ignore-line
-				->get()->getResult();
+			    ->get()->getResult();
 		}
 
 		return false;
@@ -224,9 +220,9 @@ class Permits
 
 		// @phpstan-ignore-next-line
 		return (bool) $this->permitModel
-			->where('user_id', $userId)
-			->where('name', $name)
-			->first();
+		    ->where('user_id', $userId)
+		    ->where('name', $name)
+		    ->first();
 	}
 
 	// checks for global permit for one group
@@ -243,9 +239,9 @@ class Permits
 
 		// @phpstan-ignore-next-line
 		return ! empty($this->permitModel
-			->where('group_id', $groupId)
-			->where('name', $name)
-			->first()
+		    ->where('group_id', $groupId)
+		    ->where('name', $name)
+		    ->first()
 		);
 	}
 }
