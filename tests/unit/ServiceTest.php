@@ -2,12 +2,15 @@
 
 use Tests\Support\Models\FactoryModel;
 
-class ServiceTest extends \CodeIgniter\Test\CIUnitTestCase
+/**
+ * @internal
+ */
+final class ServiceTest extends \CodeIgniter\Test\CIUnitTestCase
 {
 	// Instance of our service
 	protected $permits;
 
-	public function setUp(): void
+	protected function setUp(): void
 	{
 		parent::setUp();
 

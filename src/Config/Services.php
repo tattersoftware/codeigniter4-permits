@@ -1,4 +1,6 @@
-<?php namespace Tatter\Permits\Config;
+<?php
+
+namespace Tatter\Permits\Config;
 
 use CodeIgniter\Config\BaseService;
 use Tatter\Permits\Config\Permits as PermitsConfig;
@@ -7,12 +9,7 @@ use Tatter\Permits\Permits;
 
 class Services extends BaseService
 {
-	/**
-	 * @param PermitsConfig|null             $config
-	 * @param PermitsUserModelInterface|null $userModel
-	 * @param boolean                        $getShared
-	 */
-	public static function permits(PermitsConfig $config = null, PermitsUserModelInterface $userModel = null, bool $getShared = true)
+	public static function permits(?PermitsConfig $config = null, ?PermitsUserModelInterface $userModel = null, bool $getShared = true)
 	{
 		if ($getShared)
 		{

@@ -1,8 +1,11 @@
 <?php
 
-class HelperTest extends \CodeIgniter\Test\CIUnitTestCase
+/**
+ * @internal
+ */
+final class HelperTest extends \CodeIgniter\Test\CIUnitTestCase
 {
-	public function setUp(): void
+	protected function setUp(): void
 	{
 		parent::setUp();
 		helper('chmod');

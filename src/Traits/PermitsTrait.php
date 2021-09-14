@@ -1,11 +1,13 @@
-<?php namespace Tatter\Permits\Traits;
+<?php
+
+namespace Tatter\Permits\Traits;
 
 use Tatter\Permits\Exceptions\PermitsException;
 
 trait PermitsTrait
 {
 	// Whether the current/supplied user may insert rows into this model's table
-	public function mayCreate(int $userId = null): bool
+	public function mayCreate(?int $userId = null): bool
 	{
 		// Check for admin permit
 		if ($this->mayAdmin($userId))
@@ -42,16 +44,11 @@ trait PermitsTrait
 		}
 
 		// If logged in then check for user writable
-		if ($userId && $permissions['user']['write'])
-		{
-			return true;
-		}
-
-		return false;
+		return (bool) ($userId && $permissions['user']['write']);
 	}
 
 	// Whether the current/supplied user may read the given object
-	public function mayRead($object, int $userId = null): bool
+	public function mayRead($object, ?int $userId = null): bool
 	{
 		// Check for admin permit
 		if ($this->mayAdmin($userId))
@@ -89,16 +86,11 @@ trait PermitsTrait
 		}
 
 		// Check if the object is user-readable
-		if ($permissions['user']['read'] && $permits->userHasOwnership($userId, $object, $this))
-		{
-			return true;
-		}
-
-		return false;
+		return (bool) ($permissions['user']['read'] && $permits->userHasOwnership($userId, $object, $this));
 	}
 
 	// Whether the current/supplied user may update the given object
-	public function mayUpdate($object, int $userId = null): bool
+	public function mayUpdate($object, ?int $userId = null): bool
 	{
 		// Check for admin permit
 		if ($this->mayAdmin($userId))
@@ -136,16 +128,11 @@ trait PermitsTrait
 		}
 
 		// Check if the object is user-writeable
-		if ($permissions['user']['write'] && $permits->userHasOwnership($userId, $object, $this))
-		{
-			return true;
-		}
-
-		return false;
+		return (bool) ($permissions['user']['write'] && $permits->userHasOwnership($userId, $object, $this));
 	}
 
 	// Whether the current/supplied user may delete the given object
-	public function mayDelete($object, int $userId = null): bool
+	public function mayDelete($object, ?int $userId = null): bool
 	{
 		// Check for admin permit
 		if ($this->mayAdmin($userId))
@@ -157,7 +144,7 @@ trait PermitsTrait
 	}
 
 	// Whether the current/supplied user may list rows from this model's table
-	public function mayList(int $userId = null): bool
+	public function mayList(?int $userId = null): bool
 	{
 		// Check for admin permit
 		if ($this->mayAdmin($userId))
@@ -191,20 +178,17 @@ trait PermitsTrait
 	}
 
 	// Whether the current/supplied user may perform any of the other actions
-	public function mayAdmin(int $userId = null): bool
+	public function mayAdmin(?int $userId = null): bool
 	{
 		// Load the library and check for a user
 		$permits = service('permits');
 		$userId  = $userId ?? $permits->sessionUserId();
 
 		// Check for the permit
-		if ($permit = $permits->hasPermit($userId, 'admin' . ucfirst($this->table)))
-		{
-			return true;
-		}
+		return (bool) ($permit = $permits->hasPermit($userId, 'admin' . ucfirst($this->table)))
 
 		// Deny all other requests
-		return false;
+;
 	}
 
 	//--------------------------------------------------------------------

@@ -1,4 +1,6 @@
-<?php namespace Tatter\Permits\Config;
+<?php
+
+namespace Tatter\Permits\Config;
 
 use CodeIgniter\Config\BaseConfig;
 

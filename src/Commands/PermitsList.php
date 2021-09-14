@@ -1,4 +1,6 @@
-<?php namespace Tatter\Permits\Commands;
+<?php
+
+namespace Tatter\Permits\Commands;
 
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
@@ -18,17 +20,16 @@ class PermitsList extends BaseCommand
 
 		// get all user permits
 		$rows = $db->table('permits')->select('user_id, name, created_by, created_at')
-			->where('user_id >', 0)
-			->orderBy('user_id', 'asc')
-			->orderBy('name', 'asc')
-			->get()->getResultArray();
+		    ->where('user_id >', 0)
+		    ->orderBy('user_id', 'asc')
+		    ->orderBy('name', 'asc')
+		    ->get()->getResultArray();
 
 		if (empty($rows))
 		{
-			CLI::write( CLI::color('No user permits granted.', 'yellow') );
+			CLI::write(CLI::color('No user permits granted.', 'yellow'));
 		}
-		else
-		{
+		else {
 			$thead = ['User ID', 'Permission', 'Granted By', 'Granted Date'];
 			CLI::table($rows, $thead);
 		}
@@ -38,17 +39,16 @@ class PermitsList extends BaseCommand
 
 		// get all user permits
 		$rows = $db->table('permits')->select('group_id, name, created_by, created_at')
-			->where('group_id >', 0)
-			->orderBy('group_id', 'asc')
-			->orderBy('name', 'asc')
-			->get()->getResultArray();
+		    ->where('group_id >', 0)
+		    ->orderBy('group_id', 'asc')
+		    ->orderBy('name', 'asc')
+		    ->get()->getResultArray();
 
 		if (empty($rows))
 		{
-			CLI::write( CLI::color('No group permits granted.', 'yellow') );
+			CLI::write(CLI::color('No group permits granted.', 'yellow'));
 		}
-		else
-		{
+		else {
 			$thead = ['Group ID', 'Permission', 'Granted By', 'Granted Date'];
 			CLI::table($rows, $thead);
 		}

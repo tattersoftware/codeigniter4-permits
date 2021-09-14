@@ -1,9 +1,11 @@
-<?php namespace Tatter\Permits\Filters;
+<?php
 
+namespace Tatter\Permits\Filters;
+
+use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RedirectResponse;
 use CodeIgniter\HTTP\RequestInterface;
 use CodeIgniter\HTTP\ResponseInterface;
-use CodeIgniter\Filters\FilterInterface;
 use Tatter\Permits\Exceptions\PermitsException;
 
 class PermitsFilter implements FilterInterface
@@ -18,11 +20,11 @@ class PermitsFilter implements FilterInterface
 	 * sent back to the client, allowing for error pages,
 	 * redirects, etc.
 	 *
-	 * @param \CodeIgniter\HTTP\RequestInterface $request
-	 * @param null                               $arguments
+	 * @param null $arguments
+	 *
+	 * @throws PermitsException
 	 *
 	 * @return RedirectResponse|void
-	 * @throws PermitsException
 	 */
 	public function before(RequestInterface $request, $arguments = null)
 	{
@@ -46,14 +48,12 @@ class PermitsFilter implements FilterInterface
 				{
 					return redirect()->back()->with('error', lang('Permits.notPermitted'));
 				}
-				else
-				{
+
 					throw PermitsException::forNotPermitted();
-				}
+
 			}
 		}
 
-		return;
 	}
 
 	/**
@@ -62,9 +62,7 @@ class PermitsFilter implements FilterInterface
 	 * to stop execution of other after filters, short of
 	 * throwing an Exception or Error.
 	 *
-	 * @param \CodeIgniter\HTTP\RequestInterface  $request
-	 * @param \CodeIgniter\HTTP\ResponseInterface $response
-	 * @param null                                $arguments
+	 * @param null $arguments
 	 *
 	 * @return mixed
 	 */

@@ -1,4 +1,6 @@
-<?php namespace Tatter\Permits\Exceptions;
+<?php
+
+namespace Tatter\Permits\Exceptions;
 
 use CodeIgniter\Exceptions\ExceptionInterface;
 

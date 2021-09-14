@@ -3,7 +3,10 @@
 use CodeIgniter\Test\CIUnitTestCase;
 use Tests\Support\Models\FactoryModel;
 
-class TraitTest extends CIUnitTestCase
+/**
+ * @internal
+ */
+final class TraitTest extends CIUnitTestCase
 {
 	/**
 	 * @var FactoryModel
@@ -21,7 +24,7 @@ class TraitTest extends CIUnitTestCase
 	{
 		$result = $this->model->getMode();
 
-		$this->assertEquals(04660, $result);
+		$this->assertSame(04660, $result);
 	}
 
 	public function testSetMode()
@@ -32,6 +35,6 @@ class TraitTest extends CIUnitTestCase
 
 		$result = $this->model->getMode();
 
-		$this->assertEquals($mode, $result);
+		$this->assertSame($mode, $result);
 	}
 }

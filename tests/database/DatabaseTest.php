@@ -2,7 +2,10 @@
 
 use Tests\Support\Models\FactoryModel;
 
-class DatabaseTest extends \Tests\Support\PermitsTestCase
+/**
+ * @internal
+ */
+final class DatabaseTest extends \Tests\Support\PermitsTestCase
 {
 	public function testMayList()
 	{

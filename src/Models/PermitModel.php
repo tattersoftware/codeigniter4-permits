@@ -1,4 +1,6 @@
-<?php namespace Tatter\Permits\Models;
+<?php
+
+namespace Tatter\Permits\Models;
 
 use CodeIgniter\Model;
 
