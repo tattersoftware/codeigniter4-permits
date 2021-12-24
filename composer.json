@@ -24,8 +24,7 @@
     },
     "require-dev": {
         "codeigniter4/codeigniter4": "dev-develop",
-        "codeigniter4/codeigniter4-standard": "^1.0",
-        "tatter/tools": "^1.12"
+        "tatter/tools": "^1.15"
     },
     "autoload": {
         "psr-4": {
@@ -43,7 +42,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/codeigniter4/CodeIgniter4"
+            "url": "https://github.com/codeigniter4/CodeIgniter4.git"
         }
     ],
     "minimum-stability": "dev",
@@ -55,7 +54,6 @@
             "@deduplicate",
             "@analyze",
             "@test",
-            "@mutate",
             "@inspect",
             "@style"
         ],

@@ -2,11 +2,16 @@
 
 namespace Tests\Support;
 
+use CodeIgniter\Test\CIUnitTestCase;
+use CodeIgniter\Test\DatabaseTestTrait;
+
 /**
  * @internal
  */
-abstract class PermitsTestCase extends \CodeIgniter\Test\CIDatabaseTestCase
+abstract class PermitsTestCase extends CIUnitTestCase
 {
+	use DatabaseTestTrait;
+
 	/**
 	 * Should the database be refreshed before each test?
 	 *
