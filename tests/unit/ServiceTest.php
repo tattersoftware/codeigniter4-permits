@@ -7,52 +7,52 @@ use Tests\Support\Models\FactoryModel;
  */
 final class ServiceTest extends \CodeIgniter\Test\CIUnitTestCase
 {
-	// Instance of our service
-	protected $permits;
+    // Instance of our service
+    protected $permits;
 
-	protected function setUp(): void
-	{
-		parent::setUp();
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-		$this->permits = service('Permits');
-	}
+        $this->permits = service('Permits');
+    }
 
-	public function testIsPermissibleTrue()
-	{
-		$object       = new \stdClass();
-		$object->name = 'foobar';
+    public function testIsPermissibleTrue()
+    {
+        $object       = new \stdClass();
+        $object->name = 'foobar';
 
-		$model = new FactoryModel();
+        $model = new FactoryModel();
 
-		$this->assertTrue($this->permits->isPermissible($object, $model));
-	}
+        $this->assertTrue($this->permits->isPermissible($object, $model));
+    }
 
-	public function testIsPermissibleFalseWithoutObject()
-	{
-		$model = new FactoryModel();
+    public function testIsPermissibleFalseWithoutObject()
+    {
+        $model = new FactoryModel();
 
-		$this->assertFalse($this->permits->isPermissible(null, $model));
-	}
+        $this->assertFalse($this->permits->isPermissible(null, $model));
+    }
 
-	public function testIsPermissibleFalseWithInvalidMode()
-	{
-		$object       = new \stdClass();
-		$object->name = 'foobar';
+    public function testIsPermissibleFalseWithInvalidMode()
+    {
+        $object       = new \stdClass();
+        $object->name = 'foobar';
 
-		$model       = new FactoryModel();
-		$model->mode = 024644;
+        $model       = new FactoryModel();
+        $model->mode = 024644;
 
-		$this->assertFalse($this->permits->isPermissible($object, $model));
-	}
+        $this->assertFalse($this->permits->isPermissible($object, $model));
+    }
 
-	public function testIsPermissibleFalseWithStringMode()
-	{
-		$object       = new \stdClass();
-		$object->name = 'foobar';
+    public function testIsPermissibleFalseWithStringMode()
+    {
+        $object       = new \stdClass();
+        $object->name = 'foobar';
 
-		$model       = new FactoryModel();
-		$model->mode = '4644';
+        $model       = new FactoryModel();
+        $model->mode = '4644';
 
-		$this->assertFalse($this->permits->isPermissible($object, $model));
-	}
+        $this->assertFalse($this->permits->isPermissible($object, $model));
+    }
 }

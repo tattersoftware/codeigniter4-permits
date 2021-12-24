@@ -9,15 +9,14 @@ use Tatter\Permits\Permits;
 
 class Services extends BaseService
 {
-	public static function permits(?PermitsConfig $config = null, ?PermitsUserModelInterface $userModel = null, bool $getShared = true)
-	{
-		if ($getShared)
-		{
-			return static::getSharedInstance('permits', $config, $userModel);
-		}
+    public static function permits(?PermitsConfig $config = null, ?PermitsUserModelInterface $userModel = null, bool $getShared = true)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('permits', $config, $userModel);
+        }
 
-		$config = $config ?? config('Permits');
+        $config = $config ?? config('Permits');
 
-		return new Permits($config, $userModel);
-	}
+        return new Permits($config, $userModel);
+    }
 }
