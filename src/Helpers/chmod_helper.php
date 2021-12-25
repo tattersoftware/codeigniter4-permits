@@ -1,13 +1,17 @@
 <?php
 
-// https://caboodle.tech/blog/21/06/2017/trusting-user-input-in-phps-chmod-decimal-vs-octal/
-
-if (! function_exists('octal2array')) {
-    // Parses a perceived octal mode into an array of permissions
-    function mode2array($mode)
+if (! function_exists('mode2array')) {
+    /**
+     * Parses a perceived octal mode into an array of permissions.
+     *
+     * @see https://caboodle.tech/blog/21/06/2017/trusting-user-input-in-phps-chmod-decimal-vs-octal/
+     *
+     * @throws RuntimeException
+     */
+    function mode2array(int $mode): array
     {
         if (! is_octal($mode)) {
-            return false;
+            throw new RuntimeException($mode . ' is not a valid octal mode.');
         }
 
         $permissions['domain']['read']    = (bool) ($mode & 04000);
@@ -29,13 +33,16 @@ if (! function_exists('octal2array')) {
         return $permissions;
     }
 }
+
 if (! function_exists('is_octal')) {
-    // Convert a perceived octal mode to a decimal and then back to check if it really is an octal
-    function is_octal($octal): bool
+    /**
+     * Converts a perceived octal mode (of 4-digits or less) to a decimal
+     * and then back to check if it really is an octal.
+     *
+     * @see https://caboodle.tech/blog/21/06/2017/trusting-user-input-in-phps-chmod-decimal-vs-octal/
+     */
+    function is_octal(int $octal): bool
     {
-        if (! is_int($octal)) {
-            return false;
-        }
         if ($octal < 0 || $octal > 4095) {
             return false;
         }

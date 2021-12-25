@@ -14,6 +14,7 @@ parameters:
 		- '#Unsafe usage of new static\(\)*#'
 	scanDirectories:
 		- vendor/codeigniter4/codeigniter4/system/Helpers
+		- vendor/tatter/imposter/src/Helpers
 	dynamicConstantNames:
 		- APP_NAMESPACE
 		- CI_DEBUG

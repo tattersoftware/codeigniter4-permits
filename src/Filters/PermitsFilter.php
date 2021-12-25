@@ -24,7 +24,7 @@ class PermitsFilter implements FilterInterface
         }
         $permits = service('permits');
 
-        if (! $userId = $permits->sessionUserId()) {
+        if (null === $userId = user_id()) {
             return;
         }
 

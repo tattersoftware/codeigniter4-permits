@@ -41,30 +41,14 @@ class Permits
         $this->userModel   = $userModel ?? model(UserModel::class);
         $this->permitModel = model(PermitModel::class); // @phpstan-ignore-line
 
-        // Load the helper for mode conversions
-        helper('chmod');
-    }
-
-    /**
-     * Checks for a logged in user based on the configured key.
-     *
-     * @return int The user ID, 0 for "not logged in", -1 for CLI
-     */
-    public function sessionUserId(): int
-    {
-        if (ENVIRONMENT !== 'testing' && is_cli()) {
-            return -1;
-        }
-
-        return session($this->config->sessionUserId) ?? 0;
+        // Load the helpers
+        helper(['auth', 'chmod']);
     }
 
     // try to cache a permit and pass it back
     protected function cache($key, $permit)
     {
-        if ($duration = $this->config->cacheDuration) {
-            cache()->save($key, $permit, $duration);
-        }
+        cache()->save($key, $permit);
 
         return $permit;
     }

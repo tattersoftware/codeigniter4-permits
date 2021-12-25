@@ -8,11 +8,13 @@ class Model extends \CodeIgniter\Model
 {
     use PermitsTrait;
 
-    /* Default mode:
-     * 4 Domain list, no create
-     * 6 Owner  read, write
-     * 6 Group  read, write
-     * 4 World  read, no write
+    /**
+     * Octal permission mode, 4-digit chmod style.
+     * Default mode:
+     *  4 Domain list, no create
+     *  6 Owner  read, write
+     *  6 Group  read, write
+     *  4 World  read, no write
      */
     protected $mode = 04664;
 

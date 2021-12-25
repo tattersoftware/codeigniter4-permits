@@ -16,7 +16,7 @@ trait PermitsTrait
 
         // Load the library and check for a user
         $permits = service('permits');
-        $userId  = $userId ?? $permits->sessionUserId();
+        $userId  = $userId ?? user_id();
 
         // Check for a permit
         if ($permit = $permits->hasPermit($userId, 'create' . ucfirst($this->table))) {
@@ -52,7 +52,7 @@ trait PermitsTrait
 
         // Load the library and check for a user
         $permits = service('permits');
-        $userId  = $userId ?? $permits->sessionUserId();
+        $userId  = $userId ?? user_id();
 
         // Check for an explicit permit
         if ($permit = $permits->hasPermit($userId, 'read' . ucfirst($this->table))) {
@@ -89,7 +89,7 @@ trait PermitsTrait
 
         // Load the library and check for a user
         $permits = service('permits');
-        $userId  = $userId ?? $permits->sessionUserId();
+        $userId  = $userId ?? user_id();
 
         // Check for a permit
         if ($permit = $permits->hasPermit($userId, 'update' . ucfirst($this->table))) {
@@ -137,7 +137,7 @@ trait PermitsTrait
 
         // Load the library and check for a user
         $permits = service('permits');
-        $userId  = $userId ?? $permits->sessionUserId();
+        $userId  = $userId ?? user_id();
 
         // Check for a permit
         if ($permit = $permits->hasPermit($userId, 'list' . ucfirst($this->table))) {
@@ -162,13 +162,10 @@ trait PermitsTrait
     {
         // Load the library and check for a user
         $permits = service('permits');
-        $userId  = $userId ?? $permits->sessionUserId();
+        $userId  = $userId ?? user_id();
 
         // Check for the permit
-        return (bool) ($permit = $permits->hasPermit($userId, 'admin' . ucfirst($this->table)))
-
-        // Deny all other requests
-;
+        return (bool) ($permit = $permits->hasPermit($userId, 'admin' . ucfirst($this->table)));
     }
 
     //--------------------------------------------------------------------
