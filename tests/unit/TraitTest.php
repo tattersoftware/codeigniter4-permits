@@ -8,33 +8,33 @@ use Tests\Support\Models\FactoryModel;
  */
 final class TraitTest extends CIUnitTestCase
 {
-	/**
-	 * @var FactoryModel
-	 */
-	protected $model;
+    /**
+     * @var FactoryModel
+     */
+    protected $model;
 
-	protected function setUp(): void
-	{
-		parent::setUp();
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-		$this->model = new FactoryModel();
-	}
+        $this->model = new FactoryModel();
+    }
 
-	public function testGetMode()
-	{
-		$result = $this->model->getMode();
+    public function testGetMode()
+    {
+        $result = $this->model->getMode();
 
-		$this->assertSame(04660, $result);
-	}
+        $this->assertSame(04660, $result);
+    }
 
-	public function testSetMode()
-	{
-		$mode = 06600;
+    public function testSetMode()
+    {
+        $mode = 06600;
 
-		$this->model->setMode($mode);
+        $this->model->setMode($mode);
 
-		$result = $this->model->getMode();
+        $result = $this->model->getMode();
 
-		$this->assertSame($mode, $result);
-	}
+        $this->assertSame($mode, $result);
+    }
 }

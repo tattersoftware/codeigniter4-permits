@@ -14,16 +14,16 @@ namespace Config;
 
 class Permits extends \Tatter\Permits\Config\Permits
 {
-	// key in $_SESSION that contains the integer ID of a logged in user
-	public $sessionUserId = 'logged_in';
+    // key in $_SESSION that contains the integer ID of a logged in user
+    public $sessionUserId = 'logged_in';
 
-	// whether to implement groups access across the library
-	// set to 'false' if you don't have a groups table implemented
-	public $useGroups = true;
+    // whether to implement groups access across the library
+    // set to 'false' if you don't have a groups table implemented
+    public $useGroups = true;
 
-	// number of seconds to cache a permission
-	public $cacheDuration = 60;
+    // number of seconds to cache a permission
+    public $cacheDuration = 60;
 
-	// whether to continue instead of throwing exceptions
-	public $silent = true;
+    // whether to continue instead of throwing exceptions
+    public $silent = true;
 }

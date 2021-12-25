@@ -2,44 +2,49 @@
 
 namespace Tests\Support;
 
+use CodeIgniter\Test\CIUnitTestCase;
+use CodeIgniter\Test\DatabaseTestTrait;
+
 /**
  * @internal
  */
-abstract class PermitsTestCase extends \CodeIgniter\Test\CIDatabaseTestCase
+abstract class PermitsTestCase extends CIUnitTestCase
 {
-	/**
-	 * Should the database be refreshed before each test?
-	 *
-	 * @var bool
-	 */
-	protected $refresh = true;
+    use DatabaseTestTrait;
 
-	/**
-	 * The seed file(s) used for all tests within this test case.
-	 * Should be fully-namespaced or relative to $basePath
-	 *
-	 * @var array|string
-	 */
-	protected $seed = 'Tests\Support\Database\Seeds\PermitSeeder';
+    /**
+     * Should the database be refreshed before each test?
+     *
+     * @var bool
+     */
+    protected $refresh = true;
 
-	/**
-	 * The path to the seeds directory.
-	 * Allows overriding the default application directories.
-	 *
-	 * @var string
-	 */
-	protected $basePath = SUPPORTPATH . 'Database/';
+    /**
+     * The seed file(s) used for all tests within this test case.
+     * Should be fully-namespaced or relative to $basePath
+     *
+     * @var array|string
+     */
+    protected $seed = 'Tests\Support\Database\Seeds\PermitSeeder';
 
-	/**
-	 * The namespace(s) to help us find the migration classes.
-	 * Empty is equivalent to running `spark migrate -all`.
-	 * Note that running "all" runs migrations in date order,
-	 * but specifying namespaces runs them in namespace order (then date)
-	 *
-	 * @var array|string|null
-	 */
-	protected $namespace = [
-		'Tests\Support',
-		'Tatter\Permits',
-	];
+    /**
+     * The path to the seeds directory.
+     * Allows overriding the default application directories.
+     *
+     * @var string
+     */
+    protected $basePath = SUPPORTPATH . 'Database/';
+
+    /**
+     * The namespace(s) to help us find the migration classes.
+     * Empty is equivalent to running `spark migrate -all`.
+     * Note that running "all" runs migrations in date order,
+     * but specifying namespaces runs them in namespace order (then date)
+     *
+     * @var array|string|null
+     */
+    protected $namespace = [
+        'Tests\Support',
+        'Tatter\Permits',
+    ];
 }
