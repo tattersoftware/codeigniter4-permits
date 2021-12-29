@@ -11,9 +11,10 @@ parameters:
 		- src/Views/*
 		- src/Models/UserModel.php
 	ignoreErrors:
-		- '#Unsafe usage of new static\(\)*#'
+		- '#Access to an undefined property Tatter\\Imposter\\Entities\\User::\$[A-Za-z]+#'
 	scanDirectories:
 		- vendor/codeigniter4/codeigniter4/system/Helpers
+		- vendor/tatter/imposter/src/Helpers
 	dynamicConstantNames:
 		- APP_NAMESPACE
 		- CI_DEBUG

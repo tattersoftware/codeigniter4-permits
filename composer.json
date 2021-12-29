@@ -1,13 +1,15 @@
 {
     "name": "tatter/permits",
     "type": "library",
-    "description": "Dynamic permission handling for CodeIgniter 4",
+    "description": "Model permission handling for CodeIgniter 4",
     "keywords": [
         "codeigniter",
         "codeigniter4",
-        "authorization",
         "permission",
-        "rights"
+        "authorization",
+        "access",
+        "rights",
+        "CRUD"
     ],
     "homepage": "https://github.com/tattersoftware/codeigniter4-permits",
     "license": "MIT",
@@ -20,10 +22,13 @@
         }
     ],
     "require": {
-        "php": "^7.3 || ^8.0"
+        "php": "^7.3 || ^8.0",
+        "codeigniter4/authentication-implementation": "^1.0",
+        "tatter/users": "^1.2"
     },
     "require-dev": {
         "codeigniter4/codeigniter4": "dev-develop",
+        "tatter/imposter": "^1.1",
         "tatter/tools": "^1.15"
     },
     "autoload": {
