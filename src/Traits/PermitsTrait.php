@@ -25,44 +25,6 @@ trait PermitsTrait
      */
     private $permits;
 
-    //--------------------------------------------------------------------
-    // Testing Helper Methods
-    //--------------------------------------------------------------------
-
-    /**
-     * Changes the configuration. Used mostly for testing.
-     *
-     * @param array<string,mixed>|null $permits Use `null` to restore from the Config file.
-     *
-     * @return $this
-     *
-     * @internal
-     */
-    final public function setPermits(?array $permits): self
-    {
-        $this->permits = array_merge(config('Permits')->default, $permits ?? []);
-
-        return $this;
-    }
-
-    /**
-     * Determines and returns the configuration.
-     *
-     * @return array<string,mixed>
-     *
-     * @internal
-     */
-    final public function getPermits(): array
-    {
-        if ($this->permits === null) {
-            $this->setPermits(config('Permits')->{$this->table} ?? null);
-        }
-
-        return $this->permits;
-    }
-
-    //--------------------------------------------------------------------
-
     /**
      * Checks whether the current/supplied user may perform any of the other actions.
      */
@@ -206,5 +168,41 @@ trait PermitsTrait
             ->limit(1)
             ->get()
             ->getUnbufferedRow();
+    }
+
+    //--------------------------------------------------------------------
+    // Testing Helper Methods
+    //--------------------------------------------------------------------
+
+    /**
+     * Changes the configuration. Used mostly for testing.
+     *
+     * @param array<string,mixed>|null $permits Use `null` to restore from the Config file.
+     *
+     * @return $this
+     *
+     * @internal
+     */
+    final public function setPermits(?array $permits): self
+    {
+        $this->permits = array_merge(config('Permits')->default, $permits ?? []);
+
+        return $this;
+    }
+
+    /**
+     * Determines and returns the configuration.
+     *
+     * @return array<string,mixed>
+     *
+     * @internal
+     */
+    final public function getPermits(): array
+    {
+        if ($this->permits === null) {
+            $this->setPermits(config('Permits')->{$this->table} ?? null);
+        }
+
+        return $this->permits;
     }
 }
