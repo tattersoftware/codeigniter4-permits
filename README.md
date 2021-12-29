@@ -1,5 +1,5 @@
 # Tatter\Permits
-Dynamic permission handling for CodeIgniter 4
+Model permission handling for CodeIgniter 4
 
 [![](https://github.com/tattersoftware/codeigniter4-permits/workflows/PHPUnit/badge.svg)](https://github.com/tattersoftware/codeigniter4-permits/actions/workflows/test.yml)
 [![](https://github.com/tattersoftware/codeigniter4-permits/workflows/PHPStan/badge.svg)](https://github.com/tattersoftware/codeigniter4-permits/actions/workflows/analyze.yml)
@@ -9,168 +9,121 @@ Dynamic permission handling for CodeIgniter 4
 ## Quick Start
 
 1. Install with Composer: `> composer require tatter/permits`
-2. Update the database: `> php spark migrate -all`
-3. Extend your models: `class JobModel extends \Tatter\Permits\Model`;
-4. Ready to use! `if ($jobs->mayCreate()) ...`
-5. (Optional) Add overrides:
-`php spark permits:add`
-or
-`php spark permits:add deleteJobs groups 7`
+2. Add the trait to your models:
+```php
+class JobModel extends Model
+{
+	use PermitsTrait;
+```
+3. Use the CRUDL verbs to check access: `if ($jobs->mayCreate()) ...`
 
 ## Features
 
-Provides out-of-the-box object permissions for CodeIgniter 4
+`Permits` solves a common problem with object rights management: "Can this user
+add/change/remove this item?" This library provides object-level access rights to your
+Model classes via a single trait that adds CRUDL-style verbs to your model.
 
 ## Installation
 
 Install easily via Composer to take advantage of CodeIgniter 4's autoloading capabilities
 and always be up-to-date:
-* `> composer require tatter/permits`
+```bash
+composer require tatter/permits
+```
 
 Or, install manually by downloading the source files and adding the directory to
-`app/Config/Autoload.php`.
+**app/Config/Autoload.php**.
 
-Once the files are downloaded and included in the autoload, run any library migrations
-to ensure the database is setup correctly:
-* `> php spark migrate -all`
+`Permits` requires the Composer provision for `codeigniter4/authentication-implementation`
+as describe in the [CodeIgniter authentication guidelines](https://codeigniter4.github.io/CodeIgniter4/extending/authentication.html).
+You must install and configure a [supported package](https://packagist.org/providers/codeigniter4/authentication-implementation)
+to handle authentication and authorization in order for `Permits` to understand your users.
 
 ## Configuration (optional)
 
 The library's default behavior can be altered by extending its config file. Copy
 **examples/Permits.php to **app/Config/** and follow the instructions in the comments.
-If no config file is found in app/Config the library will use its own.
+If no config file is found in **app/Config** the library will use its own.
+
+The Config files includes a set of `$default` access levels which you may modify in your
+own version. Each Model you intend to use should have a Config property corresponding to
+its `$table` property with properties for anything that needs adjusting from the defaults.
+
+Once your configuration is complete simply include the `PermitsTrait` on your models to
+enable the methods:
+```php
+use CodeIgniter\Model;
+use Tatter\Permits\Traits\PermitsTrait;
+
+class FruitModel extends Model
+{
+    use PermitsTrait;
+...
+```
 
 ## Usage
 
-There are two types of permissions: explicit and inferred.
+There are two types of permissions: explicit and inferred. Both rely on this common set of
+CRUDL verbs:
+* **create**: Make new items
+* **read**: View a single item
+* **update**: Make changes to a single item
+* **delete**: Delete a single item
+* **list**: View an index of all items
+* **admin**: Perform any of the above regardless of other rights
+
+Use the corresponding Model verbs to check the access:
+```php
+if (! $model->mayCreate()) {
+    return redirect()->back()->with('error', 'You do not have permission to do that!');
+}
+
+$item = $model->find($id);
+if (! $model->mayUpdate($item)) {
+    return redirect()->back()->with('error', 'You can only update your own items!');
+}
+```
+
+`PermitsTrait` will check access rights based on the current logged in user (if there is one)
+but you may also pass an explicit user ID to check instead:
+```php
+if (! $model->mayAdmin($userId)) {
+    log_message('debug', "User #{$userId} attempted to access item administration.");
+}
+```
 
 ### Explicit 
 
-Explicit permissions are granted to users or groups via database entries in the `permits`
-table. Entries might look like:
+Explicit permissions are granted to users or groups via your authorization library. `Permits`
+uses [Tatter\Users](https://packagist.org/packages/tatter/users) to interact with user records
+and determine explicit permissions. If your authentication package is not supported by
+`Users` autodiscovery then be sure to [read the docs](https://github.com/tattersoftware/codeigniter4-users)
+on how to include it.
 
-| User ID | Group ID | Permit     |
-| ------- | -------- | ---------- |
-|       7 |          | readUsers  |
-|         |        3 | deleteJobs |
+When checking explicit permissions `Permits` uses the format "table.verb". For example, if
+your project includes a `BlogModel` and you want to allow Blog Editors access to edit anybody's
+blog entries you would assign "blogs.edit" to the "editors" group.
 
-You can check if a user has a specific permit, or inherits it from one of their groups:
-
-* `service('permits')->hasPermit($userId, 'readUsers');`
-
-The library also comes with convenient CLI commands for managing explicit permissions;
-run `> php spark` for a list of commands in the "Permits" group.
+> Note: Explicit permissions always take precedence over inferred permissions.
 
 ### Inferred
 
-Inferred permissions are handle by your models in a `chmod`-style four-digit octal mode. By
-default the Permits Model comes with mode `04664`, or "domain list, owner write, group write,
-world read":
-* 4 Domain list, no create
-* 6 Owner  read, write
-* 6 Group  read, write
-* 4 World  read, no write
+Inferred permissions use the configuration (see above) to determine any individual user's
+access to an item or group of items. There are four access levels which may be applied to
+each verb (these are constants on `Tatter\Permits\Config\Permits`):
 
-You may (and should) set your own mode on your models by providing an octal (0####) value
-to the `$mode` property. **Hint:** Think of the first digit as permission to the "directory",
-controlling access to list and create new files, and the remaining three digits as the "files",
-controlling access to each individual instance of your model's return-type.
+* `NOBODY`: Prohibits all access without explicit permission
+* `OWNERS`: Requires the authenticated user to own the item
+* `OWNERS`: Requires the authenticated user to own the item
+* `USERS`: Requires any authenticated user
+* `ANYBODY`: Allows anyone regardless of authentication or ownership
 
-In addition to the mode, you may supply your model with database information on how to
-determine user and group ownership. Consider the following variables:
-```
-// name of the user ID in this model's objects
-protected $userKey;
+In addition to the access levels, each model should be configured on how to determine item
+ownership. Set whichever of the following values are necessary on your table's Config property:
+ * `userKey`: Field for the user ID in the item or its pivot table
+ * `pivotKey`: Field for the item's ID in the pivot tables
+ * `pivotTable`: Table that joins the items to their owners
 
-// name of the group ID in this model's objects
-protected $groupKey;
+## Example
 
-// name of this object's ID in the pivot tables
-protected $pivotKey;
-
-// table that joins this model's objects to its users
-protected $usersPivot;
-
-// table that joins this model's objects to its groups
-protected $groupsPivot;
-```
-
-Each model expects either an ID field or a pivot table for both users and groups to
-determine if a particular object is accessible. A simple example might help.
-```
-// app/Models/JobModel.php
-class JobModel extends \Tatter\Permits\Model
-{
-	protected $table      = 'jobs';
-	protected $primaryKey = 'id';
-	protected $returnType = 'App\Entities\Job';
-	
-	...
-		
-	// Permits
-	public $mode       = 04660;
-	public $groupKey   = 'group_id';
-	public $pivotKey   = 'job_id';
-	public $usersPivot = 'jobs_users';
-}
-```
-This creates a new permitted model `JobModel`, with `$mode` `04660`, so any user may list
-jobs but would need an explicit permit to create a new one. Users and groups have full
-access to any job they have ownership of, but cannot even view details on other jobs.
-For ownership, `JobModel` tells the library to check the `Job` entity for a key
-`group_id` to determine which group has ownership. `JobModel` also defines
-`jobs_users` (`job_id`,`user_id`) as a source for users who have ownership, so multiple
-individuals may be assigned to the same job without being in its ownership group.
-
-Once your models and entities are setup, you are ready to use the built-in commands
-(or add your own) to check user permissions:
-```
-$jobs = new JobModel();
-if ($jobs->mayCreate())
-{
-	...
-}
-
-$job = $jobs->find($jobId);
-if ($jobs->mayUpdate($job))
-{
-	...
-}
-```
-Built-in commands are CRUD-style: `mayCreate()`, `mayRead($object)`, `mayUpdate($object)`,
-`mayDelete($id)`, `mayList()`, `mayAdmin()`. Command parameters are the object to test (for
-methods that work on specific instances) and an optional `$userId` to specify who to test
-for permissions. Omitting `$userId` will default to the current logged-in user, as
-configured in **Config/Permits.php**.
-
-The super-permit `mayAdmin()` checks for the explicit permit `admin{Table}` and will
-supercede any of the other built-in commands.
-
-## Extending
-
-Permits comes with a basic user model for reading and testing authorizations,
-but in most cases you will want to provide your own. You may extend the built-in model
-`\Tatter\Permits\Models\User` or supply your own to `Services::permits()`, or directly
-to the class. If you use your own model make sure it implements the Permits User Model
-interface (`\Tatter\Permits\Interfaces\PermitUserModelInterface`) and has an appropriate
-`groups()` method.
-
-The CRUDL-style methods are just a starting point! Your models can override these built-in
-methods or add new methods that take advantage of the library's structure and methods.
-Check out the code in the examples for ideas how to leverageboth explicit and inferred
-permissions.
-
-### PermitsTrait
-
-If you cannot extend the model (for example, already extending another library's model)
-you can supply the necessary class variables directly (see above) and use the library's
-trait to access the class "may" methods:
-```
-class MyModel extends \Tatter\Relations\Model
-{
-	use \Tatter\Permits\Traits\PermitsTrait;
-	
-	public $mode     = 06666;
-	public $pivotKey = 'foo_id';
-	...
-```
+**Coming soon**

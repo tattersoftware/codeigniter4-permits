@@ -2,199 +2,209 @@
 
 namespace Tatter\Permits\Traits;
 
-use Tatter\Permits\Exceptions\PermitsException;
+use Tatter\Permits\Config\Permits;
+use Tatter\Users\Interfaces\HasPermission;
+use Tatter\Users\UserEntity;
+use UnexpectedValueException;
 
+/**
+ * Permits Trait
+ *
+ * Supplies inferred permissions control for Models
+ * and their table rows. Models using this trait
+ * should have a corresponding Config entry with
+ * access levels and ownership controls.
+ */
 trait PermitsTrait
 {
-    // Whether the current/supplied user may insert rows into this model's table
-    public function mayCreate(?int $userId = null): bool
-    {
-        // Check for admin permit
-        if ($this->mayAdmin($userId)) {
-            return true;
-        }
+    /**
+     * The configuration values determined
+     * from the config file.
+     *
+     * @var array<string,mixed>|null
+     */
+    private $permits;
 
-        // Load the library and check for a user
-        $permits = service('permits');
-        $userId  = $userId ?? user_id();
-
-        // Check for a permit
-        if ($permit = $permits->hasPermit($userId, 'create' . ucfirst($this->table))) {
-            return true;
-        }
-
-        // Make sure the mode is setup correctly
-        if (! is_octal($this->mode)) {
-            return false;
-        }
-
-        // Verify the mode
-        if (! $permissions = mode2array($this->mode)) {
-            return false;
-        }
-
-        // Check for domain writeable (create)
-        if ($permissions['domain']['write']) {
-            return true;
-        }
-
-        // If logged in then check for user writable
-        return (bool) ($userId && $permissions['user']['write']);
-    }
-
-    // Whether the current/supplied user may read the given object
-    public function mayRead($object, ?int $userId = null): bool
-    {
-        // Check for admin permit
-        if ($this->mayAdmin($userId)) {
-            return true;
-        }
-
-        // Load the library and check for a user
-        $permits = service('permits');
-        $userId  = $userId ?? user_id();
-
-        // Check for an explicit permit
-        if ($permit = $permits->hasPermit($userId, 'read' . ucfirst($this->table))) {
-            return true;
-        }
-
-        // Make sure permissions are setup correctly
-        if (! $permits->isPermissible($object, $this)) {
-            return false;
-        }
-        $permissions = mode2array($this->mode);
-
-        // Check if the object is world-readable
-        if ($permissions['world']['read']) {
-            return true;
-        }
-
-        // Check if the object is group-readable
-        if ($permissions['group']['read'] && $permits->userHasGroupOwnership($userId, $object, $this)) {
-            return true;
-        }
-
-        // Check if the object is user-readable
-        return (bool) ($permissions['user']['read'] && $permits->userHasOwnership($userId, $object, $this));
-    }
-
-    // Whether the current/supplied user may update the given object
-    public function mayUpdate($object, ?int $userId = null): bool
-    {
-        // Check for admin permit
-        if ($this->mayAdmin($userId)) {
-            return true;
-        }
-
-        // Load the library and check for a user
-        $permits = service('permits');
-        $userId  = $userId ?? user_id();
-
-        // Check for a permit
-        if ($permit = $permits->hasPermit($userId, 'update' . ucfirst($this->table))) {
-            return true;
-        }
-
-        // Make sure permissions are setup correctly
-        if (! $permits->isPermissible($object, $this)) {
-            return false;
-        }
-        $permissions = mode2array($this->mode);
-
-        // Check if the object is world-writeable
-        if ($permissions['world']['write']) {
-            return true;
-        }
-
-        // Check if the object is group-writeable
-        if ($permissions['group']['write'] && $permits->userHasGroupOwnership($userId, $object, $this)) {
-            return true;
-        }
-
-        // Check if the object is user-writeable
-        return (bool) ($permissions['user']['write'] && $permits->userHasOwnership($userId, $object, $this));
-    }
-
-    // Whether the current/supplied user may delete the given object
-    public function mayDelete($object, ?int $userId = null): bool
-    {
-        // Check for admin permit
-        if ($this->mayAdmin($userId)) {
-            return true;
-        }
-
-        return $this->mayUpdate($object, $userId);
-    }
-
-    // Whether the current/supplied user may list rows from this model's table
-    public function mayList(?int $userId = null): bool
-    {
-        // Check for admin permit
-        if ($this->mayAdmin($userId)) {
-            return true;
-        }
-
-        // Load the library and check for a user
-        $permits = service('permits');
-        $userId  = $userId ?? user_id();
-
-        // Check for a permit
-        if ($permit = $permits->hasPermit($userId, 'list' . ucfirst($this->table))) {
-            return true;
-        }
-
-        // Make sure permissions are setup correctly
-        if (! is_octal($this->mode)) {
-            return false;
-        }
-
-        // Check if the domain is readable
-        if ($permissions = mode2array($this->mode)) {
-            return $permissions['domain']['read'];
-        }
-
-        return false;
-    }
-
-    // Whether the current/supplied user may perform any of the other actions
-    public function mayAdmin(?int $userId = null): bool
-    {
-        // Load the library and check for a user
-        $permits = service('permits');
-        $userId  = $userId ?? user_id();
-
-        // Check for the permit
-        return (bool) ($permit = $permits->hasPermit($userId, 'admin' . ucfirst($this->table)));
-    }
-
+    //--------------------------------------------------------------------
+    // Testing Helper Methods
     //--------------------------------------------------------------------
 
     /**
-     * Changes the access mode.
+     * Changes the configuration. Used mostly for testing.
      *
-     * @param int $mode Integer representation of octal mode. Default 04664
+     * @param array<string,mixed>|null $permits Use `null` to restore from the Config file.
      *
      * @return $this
+     *
+     * @internal
      */
-    public function setMode(int $mode): self
+    final public function setPermits(?array $permits): self
     {
-        helper('chmod');
-        if (! is_octal($mode)) {
-            throw new PermitsException($this->table, $mode);
-        }
-        $this->mode = $mode;
+        $this->permits = array_merge(config('Permits')->default, $permits ?? []);
 
         return $this;
     }
 
     /**
-     * Returns the access mode.
+     * Determines and returns the configuration.
      *
-     * @return int Integer representation of octal mode. Default 04664
+     * @return array<string,mixed>
+     *
+     * @internal
      */
-    public function getMode(): int
+    final public function getPermits(): array
     {
-        return $this->mode;
+        if ($this->permits === null) {
+            $this->setPermits(config('Permits')->{$this->table} ?? null);
+        }
+
+        return $this->permits;
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Checks whether the current/supplied user may perform any of the other actions.
+     */
+    public function mayAdmin(?int $userId = null): bool
+    {
+        return $this->permissible('admin', $userId);
+    }
+
+    /**
+     * Checks whether the current/supplied user may insert rows into this model's table.
+     */
+    public function mayCreate(?int $userId = null): bool
+    {
+        return $this->permissible('create', $userId);
+    }
+
+    /**
+     * Checks whether the current/supplied user may list rows from this model's table.
+     */
+    public function mayList(?int $userId = null): bool
+    {
+        return $this->permissible('list', $userId);
+    }
+
+    /**
+     * Checks whether the current/supplied user may read the given object.
+     *
+     * @param mixed $item
+     */
+    public function mayRead($item, ?int $userId = null): bool
+    {
+        return $this->permissible('read', $userId, $item);
+    }
+
+    /**
+     * Checks whether the current/supplied user may update the given object.
+     *
+     * @param mixed $item
+     */
+    public function mayUpdate($item, ?int $userId = null): bool
+    {
+        return $this->permissible('update', $userId, $item);
+    }
+
+    /**
+     * Checks whether the current/supplied user may delete the given object.
+     *
+     * @param mixed $item
+     */
+    public function mayDelete($item, ?int $userId = null): bool
+    {
+        return $this->permissible('delete', $userId, $item);
+    }
+
+    //--------------------------------------------------------------------
+    // Support Methods (internal)
+    //--------------------------------------------------------------------
+
+    /**
+     * Handles the processing of permission checks.
+     * Should not be called directly - use the "mayVerb()" methods.
+     *
+     * @param array|object|null $item An item of $returnType, or null for domain verbs (create, list)
+     *
+     * @throws UnexpectedValueException If an authenticated user is indicated but unable to be located
+     */
+    final protected function permissible(string $verb, ?int $userId, $item = null): bool
+    {
+        // Determine the user (if any)
+        $userId = $userId ?? user_id();
+
+        if ($userId !== null) {
+            $user = service('users')->findById($userId);
+            if ($user === null) {
+                throw new UnexpectedValueException('User provider was unable to locate a User with ID: ' . $userId);
+            }
+
+            // Check for overriding authorization
+            if ($this->userHasPermission($user, $verb)) {
+                return true;
+            }
+        }
+
+        // Using inferred permissions
+        $access = $this->getPermits()[$verb];
+
+        // Handle scenarios they do not require ownership lookup
+        if (! isset($user) || $access !== Permits::OWNERS || in_array($verb, ['admin', 'create', 'list'], true)) {
+            return Permits::check($access, $userId);
+        }
+
+        // Everything else needs database lookup, so transform and verify the item
+        $item = $this->transformDataToArray($item, 'insert');
+
+        return Permits::check($access, $userId, $this->userOwnsItem($user, $item));
+    }
+
+    /**
+     * Checks if a User is authorized for the given action.
+     */
+    private function userHasPermission(UserEntity $user, string $verb): bool
+    {
+        if (! $user instanceof HasPermission) {
+            return false;
+        }
+
+        // Always allow admin access
+        if ($user->hasPermission($this->table . '.admin')) {
+            return true;
+        }
+
+        return $user->hasPermission($this->table . '.' . $verb);
+    }
+
+    /**
+     * Checks if the User owns the item.
+     */
+    private function userOwnsItem(UserEntity $user, array $item): bool
+    {
+        $permits = $this->getPermits();
+
+        // Make sure user lookup is enabled
+        if ($permits['userKey'] === null) {
+            return false;
+        }
+
+        // Check if the item itself has $userKey set
+        if (isset($item[$permits['userKey']])) {
+            return $user->getId() === $item[$permits['userKey']];
+        }
+
+        // Make sure there is a valid pivot table and ID
+        if ($permits['pivotTable'] === null || $permits['pivotKey'] === null || ! isset($item[$this->primaryKey])) {
+            return false;
+        }
+
+        return (bool) $this->db
+            ->table($permits['pivotTable'])
+            ->where($permits['userKey'], $user->getId())
+            ->where($permits['pivotKey'], $item[$this->primaryKey])
+            ->limit(1)
+            ->get()
+            ->getUnbufferedRow();
     }
 }
