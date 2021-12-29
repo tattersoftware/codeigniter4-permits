@@ -11,11 +11,11 @@ Model permission handling for CodeIgniter 4
 1. Install with Composer: `> composer require tatter/permits`
 2. Add the trait to your models:
 ```php
-class JobModel extends Model
+class BlogModel extends Model
 {
-	use PermitsTrait;
+    use PermitsTrait;
 ```
-3. Use the CRUDL verbs to check access: `if ($jobs->mayCreate()) ...`
+3. Use the CRUDL verbs to check access: `if ($blogs->mayCreate()) ...`
 
 ## Features
 
@@ -126,4 +126,245 @@ ownership. Set whichever of the following values are necessary on your table's C
 
 ## Example
 
-**Coming soon**
+Your web app includes a Content Management System that allows the site owners to log in and
+update various parts of the site. This includes a blog section, with its own Model, Controller,
+and Views. Any visitors to your site can create an account and submit a blog entry, but it
+needs to be approved before it "goes live". Being the brilliant developer you are, you decide
+to use `Tatter\Permits` to manage access to the blog entries.
+
+> `Permits` requires an [authentication implementation](https://packagist.org/providers/codeigniter4/authentication-implementation);
+> for this example we will use [Shield](https://github.com/lonnieezell/codeigniter-shield).
+
+First we need to make sure our authentication package is ready with the correct permissions.
+This may vary back package, but `Shield` defines Groups and Permissions using
+[Config files](https://github.com/lonnieezell/codeigniter-shield/blob/develop/docs/3%20-%20authorization.md).
+We will leave the existing groups and add a new "editors" group.
+**app/Config/AuthGroups.php**:
+```php
+    public $groups = [
+        'superadmin' => [
+            'title'       => 'Super Admin',
+            'description' => 'Complete control of the site.',
+        ],
+        'admin' => [
+            'title'       => 'Admin',
+            'description' => 'Day to day administrators of the site.',
+        ],
+        'developer' => [
+            'title'       => 'Developer',
+            'description' => 'Site programmers.',
+        ],
+        'user' => [
+            'title'       => 'User',
+            'description' => 'General users of the site. Often customers.',
+        ],
+        'beta' => [
+            'title'       => 'Beta User',
+            'description' => 'Has access to beta-level features.',
+        ],
+        'editor' => [
+            'title'       => 'Blog Editors',
+            'description' => 'Has access to all blog entries.',
+        ],
+    ];
+```
+
+We want to give explicit permission for blog administration to some groups, so in the same
+file we add a new permission in the format "{table}.{verb}":
+```php
+    public $permissions = [
+        'admin.access'        => 'Can access the sites admin area',
+        'admin.settings'      => 'Can access the main site settings',
+        'users.manage-admins' => 'Can manage other admins',
+        'users.create'        => 'Can create new non-admin users',
+        'users.edit'          => 'Can edit existing non-admin users',
+        'users.delete'        => 'Can delete existing non-admin users',
+        'beta.access'         => 'Can access beta-level features',
+        'blogs.admin'         => 'Allows all access to blog model operations',
+    ];
+```
+
+Finally we add the new permission to the groups we want to have it, in the same file still:
+```php
+    public $matrix = [
+        'superadmin' => [
+            'admin.*',
+            'users.*',
+            'beta.*',
+            'blogs.*',
+        ],
+        'admin' => [
+            'admin.access',
+            'users.create',
+            'users.edit',
+            'users.delete',
+            'beta.access',
+            'blogs.admin',
+        ],
+        'developer' => [
+            'admin.access',
+            'admin.settings',
+            'users.create',
+            'users.edit',
+            'beta.access',
+        ],
+        'user' => [],
+        'beta' => [
+            'beta.access',
+        ],
+        'editor' => [
+            'blogs.admin',
+        ],
+    ];
+```
+
+That's it for the third-party authorization configuration! On to `Permits` - first thing we
+need is to set the permissions in our Config file. We can leave the defaults as they are
+and add our own property.
+**app/Config/Permits.php**:
+```php
+    /*
+     * @var array<string,mixed>
+     */
+    public $blogs = [
+        'admin'      => self::NOBODY,
+        'create'     => self::USERS,
+        'list'       => self::USERS,
+        'read'       => self::OWNERS,
+        'update'     => self::OWNERS,
+        'delete'     => self::OWNERS,
+        'userKey'    => 'user_id',
+        'pivotKey'   => null,
+        'pivotTable' => null,
+    ];
+}
+```
+
+Let's break that down.
+
+1. The first permission, "admin": we gave explicit rights to above in our
+auth package so we do not want anyone else having access, hence `NOBODY`. Explicit permissions
+take precedence so our "superadmin", "admin", and "editor" groups will still have full access.
+
+2. Next are "list" and "create": both are available to `USERS` - that is, anyone who is logged
+in. They will be able to create new entries and see a list of others' entries.
+
+3. However, "read", "update", and "delete" are all restricted to `OWNERS` - authenticated users will only
+be able to click on their own entries to read and modify the content.
+
+4. Finally, we need a way for `Permits` to decide "who owns this". In this case we set "userKey"
+but leave the pivot properties blank - meaning, our `blogs` table has a field called `user_id`
+which corresponds to the ID of the user that created the blog.
+
+> In more complex setups where multiple users are assigned to multiple blogs we might have a
+> join table, in which case we would also have set "pivotTable" to something like `blogs_users`
+> and "pivotKey" like `blog_id`.
+
+Configuration complete! The final piece to the integration is to add our trait to the blog
+model, which will handle activating our access verbs.
+**app/Models/BlogModel.php**:
+```php
+
+use App\Entities\Blog;
+use CodeIgniter\Model;
+use Tatter\Permits\Traits\PermitsTrait;
+
+class BlogModel extends Model
+{
+    use PermitsTrait;
+
+    protected $table      = 'blogs';
+    protected $primaryKey = 'id';
+    protected $returnType = Blog::class;
+...
+}
+```
+
+Integration complete! Now you are ready to start using `Permits` in your code. Let's make
+a Controller for our blogs and add some permissions checks before the regular code.
+**app/Controllers/Blogs.php**:
+```php
+<?php
+
+namespace App\Controllers;
+
+use App\Models\BlogModel;
+use CodeIgniter\HTTP\RedirectResponse;
+
+class Blogs extends BaseController
+{
+    /**
+     * @var BlogModel
+     */
+    protected $model;
+
+    /**
+     * Preloads the model.
+     */
+    public function __construct()
+    {
+        $this->model = model(BlogModel::class);
+    }
+
+    /**
+     * Displays the list of approved blogs
+     * for all visitors of the website.
+     */
+    public function index(): string
+    {
+        return view('blogs/public', [
+            'blogs' => $this->model->findAll(),
+        ]);
+    }
+    
+    /**
+     * Displays blogs eligible for updating
+     * based on the authenticated user (handled
+     * by our authentication Filter).
+     */
+    public function manage(): string
+    {
+        // Admin access sees all blogs, otherwise limit to the current user
+        if (! $this->model->mayAdmin()) {
+            $this->model->where('user_id', user_id());
+        }
+
+        return view('blogs/manage', [
+            'blogs' => $this->model->findAll(),
+        ]);
+    }
+    
+    /**
+     * Shows a single blog with options
+     * to update or delete.
+     *
+     * @return RedirectResponse|string
+     */
+    public function edit($blogId)
+    {
+        // Verify the blog
+        if (empty($blogId) || null === $blog = $this->model->find($blogId)) {
+            return redirect()->back()->with('error', 'Could not find that blog entry.');
+        }
+
+        // Check access
+        if (! $this->model->mayUpdate($blog)) {
+            return redirect()->back()->with('error', 'You do not have permission to do that.');
+        }
+
+        return view('blogs/edit', [
+            'blog' => $blog,
+        ]);
+    }
+...
+```
+
+Hopefully you get the idea from here! For developers who like to keep their controllers
+even more lightweight you could even put some of these checks into a Filter.
+
+## Extending
+
+The CRUDL-style methods are just a starting point! Your models can override these built-in
+methods or add new methods that take advantage of the library's structure and methods.
+Check out the code in the source repo for ideas how to leverage both explicit and inferred
+permissions.
