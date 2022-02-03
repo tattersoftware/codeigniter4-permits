@@ -14,33 +14,13 @@ final class OwnershipTest extends TestCase
 {
     use DatabaseTestTrait;
 
-    protected $refresh   = false;
-    protected $namespace = 'Tests\Support';
-
-    /**
-     * @var User|null
-     */
-    protected $user;
-
-    /**
-     * @var FactoryModel
-     */
-    protected $model;
-
-    /**
-     * @var object
-     */
-    protected $byKey;
-
-    /**
-     * @var object
-     */
-    protected $byPivot;
-
-    /**
-     * @var object
-     */
-    protected $unowned;
+    protected $refresh    = false;
+    protected $namespace  = 'Tests\Support';
+    protected ?User $user = null;
+    protected FactoryModel $model;
+    protected object $byKey;
+    protected object $byPivot;
+    protected object $unowned;
 
     protected function setUp(): void
     {

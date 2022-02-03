@@ -38,6 +38,30 @@ class Permits extends BaseConfig
     public const ANYBODY = 1000;
 
     /**
+     * The default set of attributes to use for unspecified
+     * properties and values.
+     * Verbs correspond to each access type.
+     * Remaining keys are used to identify ownership:
+     * - userKey: Field for the user ID in the item or its pivot table
+     * - pivotKey: Field for the item's ID in the pivot tables
+     * - pivotTable: Table that joins the items to their owners
+     * Setting ownership fields to `null` will disable owner lookup.
+     *
+     * @var array<string,mixed>
+     */
+    public array $default = [
+        'admin'      => self::NOBODY,
+        'create'     => self::USERS,
+        'list'       => self::ANYBODY,
+        'read'       => self::ANYBODY,
+        'update'     => self::OWNERS,
+        'delete'     => self::OWNERS,
+        'userKey'    => null,
+        'pivotKey'   => null,
+        'pivotTable' => null,
+    ];
+
+    /**
      * Verifies a permission against the supplied values.
      *
      * @throws DomainException If an unknown permission is passed
@@ -60,28 +84,4 @@ class Permits extends BaseConfig
 
         throw new DomainException('Undefined access value: ' . $access);
     }
-
-    /**
-     * The default set of attributes to use for unspecified
-     * properties and values.
-     * Verbs correspond to each access type.
-     * Remaining keys are used to identify ownership:
-     * - userKey: Field for the user ID in the item or its pivot table
-     * - pivotKey: Field for the item's ID in the pivot tables
-     * - pivotTable: Table that joins the items to their owners
-     * Setting ownership fields to `null` will disable owner lookup.
-     *
-     * @var array<string,mixed>
-     */
-    public $default = [
-        'admin'      => self::NOBODY,
-        'create'     => self::USERS,
-        'list'       => self::ANYBODY,
-        'read'       => self::ANYBODY,
-        'update'     => self::OWNERS,
-        'delete'     => self::OWNERS,
-        'userKey'    => null,
-        'pivotKey'   => null,
-        'pivotTable' => null,
-    ];
 }

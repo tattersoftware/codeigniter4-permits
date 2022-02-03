@@ -11,10 +11,7 @@ use Tests\Support\TestCase;
  */
 final class InferredTest extends TestCase
 {
-    /**
-     * @var User|null
-     */
-    protected $user;
+    protected ?User $user = null;
 
     protected function setUp(): void
     {
