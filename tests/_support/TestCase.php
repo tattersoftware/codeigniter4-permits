@@ -19,11 +19,3 @@ abstract class TestCase extends CIUnitTestCase
         UserProvider::addFactory(ImposterFactory::class, ImposterFactory::class);
     }
 }
-
-/*
-    // Permits
-    public $mode       = 04660;
-    public $groupKey   = 'group_id';
-    public $pivotKey   = 'factory_id';
-    public $usersPivot = 'factories_users';
-*/
