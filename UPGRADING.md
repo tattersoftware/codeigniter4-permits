@@ -5,6 +5,8 @@
 
 > Note: This is a complete refactor! Please be sure to read the docs carefully before upgrading.
 
+* Minimum PHP version has been bumped to `7.4` to match the upcoming framework changes
+* All properties that can be typed have been
 * Now requires a verified authentication system via `codeigniter4/authentication-implementation`
 * Switches to `Tatter\Users` for interface handling; [read the docs](https://github.com/tattersoftware/codeigniter4-users) to be sure your Models and Entities are configured
 * No longer handles explicit permissions - these should now handled by your Auth library; read more below

@@ -13,10 +13,7 @@ use Tests\Support\TestCase;
  */
 final class TraitTest extends TestCase
 {
-    /**
-     * @var FactoryModel
-     */
-    protected $model;
+    protected FactoryModel $model;
 
     protected function setUp(): void
     {

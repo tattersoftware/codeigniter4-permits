@@ -23,7 +23,7 @@ trait PermitsTrait
      *
      * @var array<string,mixed>|null
      */
-    private $permits;
+    private ?array $permits = null;
 
     /**
      * Checks whether the current/supplied user may perform any of the other actions.
@@ -94,7 +94,7 @@ trait PermitsTrait
     final protected function permissible(string $verb, ?int $userId, $item = null): bool
     {
         // Determine the user (if any)
-        $userId = $userId ?? user_id();
+        $userId ??= user_id();
 
         if ($userId !== null) {
             $user = service('users')->findById($userId);

@@ -13,7 +13,7 @@ final class ConfigTest extends TestCase
         $this->expectException('DomainException');
         $this->expectExceptionMessage('Undefined access value: 42');
 
-        $result = Permits::check(42, null);
+        Permits::check(42, null);
     }
 
     /**
